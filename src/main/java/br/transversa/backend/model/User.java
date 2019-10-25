@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
 @Entity
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "email" }) })
+@Table(name = "users")
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
 @JsonInclude(value = Include.NON_EMPTY)
 public class User {
@@ -54,11 +54,13 @@ public class User {
 
 	private String email;
 
+	@Column(name="razao_social")
 	private String nome;
 
 	@JsonIgnore
 	private String senha;
 
+	@Column(name="nome_fantasia")
 	private String sobrenome;
 	
 	private String endereco;
@@ -66,6 +68,13 @@ public class User {
 	private Double latitude;
 	
 	private Double longitude;
+	
+	private String observacao;
+	
+	private String cep;
+	
+	@Column(name="inscricao_estadual")
+	private String inscricaoEstadual;
 
 	//bi-directional many-to-one association to Carrinho
 	@OneToMany(mappedBy="user1")
@@ -141,6 +150,12 @@ public class User {
 	
 	
 	
+	public User(String cpfCnpj) {
+		super();
+		this.cpfCnpj = cpfCnpj;
+	}
+
+
 	public User(Long id, String nome, String sobrenome, String cpfCnpj, String email, String celular, String uuid,     
 			Double latitude, Double longitude, String endereco) {
 		super();
@@ -276,6 +291,30 @@ public class User {
 	public void setSobrenome(String sobrenome) {
 		this.sobrenome = sobrenome;
 	}
+	
+	
+
+	public String getObservacao() {
+		return observacao;
+	}
+
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+	
+	
+
+
+	public String getInscricaoEstadual() {
+		return inscricaoEstadual;
+	}
+
+
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
 
 	public List<Carrinho> getCarrinhos1() {
 		return this.carrinhos1;
@@ -362,6 +401,16 @@ public class User {
 	}
 	
 	
+
+	public String getCep() {
+		return cep;
+	}
+
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
 
 	public String getEndereco() {
 		return endereco;

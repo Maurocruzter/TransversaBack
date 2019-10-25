@@ -8,6 +8,7 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +47,13 @@ public class EstadoPedido implements Serializable {
 	
 	private int currestado;
 	
+	@Column(name="includes_photo")
+	private byte includesPhoto;
+	
+	//bi-directional many-to-one association to ObservacaoEstadoPedido
+	@OneToMany(mappedBy="estadoPedido")
+	private List<ObservacaoEstadoPedido> observacaoEstadoPedidos;
+	
 	
 	@Transient
 	private String nomeVendedor;
@@ -73,12 +81,24 @@ public class EstadoPedido implements Serializable {
 
 	@Transient
 	private byte isTransporte;
+	
+	@Transient
+	private int clienteReclamouEstado;
 
 	public EstadoPedido() {
 	}
 
 	
 	
+
+
+	public EstadoPedido(Long id) {
+		super();
+		this.id = id;
+	}
+
+
+
 
 
 	public EstadoPedido(Long id, String nomeVendedor, 
@@ -102,7 +122,7 @@ public class EstadoPedido implements Serializable {
 	public EstadoPedido(Long id, String nomeVendedor, 
 			Long idVendedor, String nomeCliente, 
 			Long idCliente, Date dataAdicionado,
-			String observacao) {
+			String observacao, int clienteReclamouEstado, byte includesPhoto) {
 		super();
 		this.id = id;
 		this.nomeVendedor = nomeVendedor;
@@ -111,13 +131,15 @@ public class EstadoPedido implements Serializable {
 		this.idCliente = idCliente;
 		this.dataAdicionado = (Timestamp) dataAdicionado;
 		this.observacao = observacao;
+		this.clienteReclamouEstado = clienteReclamouEstado;
+		this.includesPhoto = includesPhoto;
 	}
-	
-	
+
 	public EstadoPedido(Long id,Date dataAdicionado, int currestado,
 			String nomeVendedor, 
 			Long idVendedor, String nomeCliente,
-			Long idCliente, BigDecimal precoTotal, Long idPedido
+			Long idCliente, BigDecimal precoTotal, Long idPedido,
+			int clienteReclamouEstado
 			) {
 		super();
 		this.id = id;
@@ -130,22 +152,37 @@ public class EstadoPedido implements Serializable {
 		
 		if(currestado == 0) {
 			this.observacao = "Em análise";
-		}
-		if(currestado == 1) {
-			this.observacao = "Aprovado";
-		}
-		
-		if(currestado == 2) {
+		} else if(currestado == 1) {
+			this.observacao = "Em separação";
+		} else if(currestado == 2) {
 			this.observacao = "Em transporte";
-		}
-		
-		if(currestado == 3) {
+		} else if(currestado == 3) {
+			this.observacao = "Entregue";
+		} else if(currestado == 4) {
 			this.observacao = "Finalizado";
+		} else if(currestado == 99) {
+			this.observacao = "Cancelado";
 		}
 		
 //		this.observacao 
 		this.precoTotal = precoTotal;
 		this.idPedido = idPedido;
+//		this.clienteReclamouEstado = clienteReclamouEstado;
+		if(clienteReclamouEstado == 1) {
+			this.observacao = "Reclamação em análise";
+		} else if(clienteReclamouEstado == 2) {
+			this.observacao = "Reclamacao aceite";
+		} else if(clienteReclamouEstado == 3) {
+			this.observacao = "Substituto em separação";
+		} else if(clienteReclamouEstado == 4) {
+			this.observacao = "Substituto em transporte";
+		} else if(clienteReclamouEstado == 5) {
+			this.observacao = "Substituto entregue";
+		} else if(clienteReclamouEstado == 6) {
+			this.observacao = "Substituto finalizado";
+		} else if(clienteReclamouEstado == 99) {
+			this.observacao = "Cancelado pelo administrador";
+		}
 	}
 	
 	
@@ -164,6 +201,38 @@ public class EstadoPedido implements Serializable {
 //		this.dataAdicionado = (Timestamp) dataAdicionado;
 //		this.observacao = observacao;
 //	}
+
+
+
+
+	public byte getIncludesPhoto() {
+		return includesPhoto;
+	}
+
+
+
+
+
+	public void setIncludesPhoto(byte includesPhoto) {
+		this.includesPhoto = includesPhoto;
+	}
+
+
+
+
+
+	public List<ObservacaoEstadoPedido> getObservacaoEstadoPedidos() {
+		return observacaoEstadoPedidos;
+	}
+
+
+
+
+
+	public void setObservacaoEstadoPedidos(List<ObservacaoEstadoPedido> observacaoEstadoPedidos) {
+		this.observacaoEstadoPedidos = observacaoEstadoPedidos;
+	}
+
 
 
 
@@ -226,6 +295,22 @@ public class EstadoPedido implements Serializable {
 
 	public void setIsTransporte(byte isTransporte) {
 		this.isTransporte = isTransporte;
+	}
+
+
+
+
+
+	public int getClienteReclamouEstado() {
+		return clienteReclamouEstado;
+	}
+
+
+
+
+
+	public void setClienteReclamouEstado(int clienteReclamouEstado) {
+		this.clienteReclamouEstado = clienteReclamouEstado;
 	}
 
 

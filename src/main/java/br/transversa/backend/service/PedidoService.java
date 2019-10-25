@@ -10,10 +10,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.transversa.backend.model.EntregadorPedido;
 import br.transversa.backend.model.EstadoPedido;
+import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Pedido;
 import br.transversa.backend.model.PedidosHasProduto;
+import br.transversa.backend.repository.EntregadorPedidoRepository;
 import br.transversa.backend.repository.EstadoPedidoRepository;
+import br.transversa.backend.repository.ObservacaoEstadoPedidoRepository;
 import br.transversa.backend.repository.PedidoHasProdutoRepository;
 import br.transversa.backend.repository.PedidoRepository;
 
@@ -30,6 +34,12 @@ public class PedidoService {
 	@Autowired
 	EstadoPedidoRepository estadoPedidoRepository;
 	
+	@Autowired
+	ObservacaoEstadoPedidoRepository observacaoEstadoPedidoRepository;
+	
+	@Autowired
+	EntregadorPedidoRepository entregadorPedidoRepository;
+	
 	public void createBulk(List<PedidosHasProduto> listPedidoHasProduto) {
 		pedidoHasProdutoRepository.saveAll(listPedidoHasProduto);
 	}
@@ -42,6 +52,10 @@ public class PedidoService {
 		return estadoPedidoRepository.save(estadoPedido);
 	}
 	
+	public void saveEntregadorPedido(EntregadorPedido entregadorPedido) {
+		entregadorPedidoRepository.save(entregadorPedido);
+	}
+	
 	public Page<EstadoPedido> listarPedidosCliente(Long idCliente, int pageNumber) {
 //		Pageable sortedByPriceDesc = 
 //				  PageRequest.of(0, 1, Sort.by("id").descending());
@@ -49,6 +63,12 @@ public class PedidoService {
 		
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return estadoPedidoRepository.findPedidosCliente(idCliente, pageable);
+	}
+	
+	public Page<EstadoPedido> listarPedidosEntregador(Long idEntregador, int pageNumber) {
+		
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return entregadorPedidoRepository.findPedidosEntregador(idEntregador, pageable);
 	}
 	
 	public Page<EstadoPedido> listarPedidos(int pageNumber) {
@@ -88,6 +108,11 @@ public class PedidoService {
 	}
 	
 
+	public List<ObservacaoEstadoPedido> findObservacaoEstadoPedidoByIdPedido(Long idPedido){
+		return observacaoEstadoPedidoRepository.findObservacaoEstadoPedidoByIdPedido(idPedido);
+		
+	}
+	
 	public List<EstadoPedido> findObservacoesPedidoByIdPedidoAndIdCliente(Long idCliente, Long idPedido) {
 		
 		return estadoPedidoRepository.findObservacoesPedidoByIdPedidoAndIdCliente(idCliente,idPedido);
@@ -115,6 +140,39 @@ public class PedidoService {
 	
 	public List<PedidosHasProduto> findPedidoDetalhesByIdPedidoReturnUUID(Long idPedido) {
 		return pedidoHasProdutoRepository.findPedidoDetalhesByIdPedidoReturnUUID(idPedido);
+	}
+
+	public int setPedidoAprovado(byte isAprovado, Long id) {
+		return pedidoRepository.setPedidoAprovado(isAprovado, id);
+		
+	}
+	
+	public int setPedidoTransporte(byte isTransporte, Long id) {
+		return pedidoRepository.setPedidoTransporte(isTransporte, id);
+		
+	}
+
+	public int setPedidoFinalizado(byte isFinalizado, Long id) {
+		return pedidoRepository.setPedidoFinalizado(isFinalizado, id);
+		
+	}
+
+	public int setPedidoEntregue(byte isEntregue, Long id) {
+		return pedidoRepository.setPedidoEntregue(isEntregue, id);
+		
+	}
+
+	public int setPedidoCancelado(byte isCancelado, Long id) {
+		return pedidoRepository.setPedidoCancelado(isCancelado, id);
+		
+	}
+
+	public int setClienteReclamouEstado(int clienteReclamouEstado, Long id) {
+		return pedidoRepository.setClienteReclamouEstado(clienteReclamouEstado, id);
+	}
+	
+	public void saveObservacaoEstadoPedido(ObservacaoEstadoPedido observacaoEstadoPedido) {
+		observacaoEstadoPedidoRepository.save(observacaoEstadoPedido);
 	}
 	
 	

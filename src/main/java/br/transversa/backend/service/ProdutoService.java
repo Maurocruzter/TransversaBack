@@ -9,7 +9,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Produto;
+import br.transversa.backend.repository.ObservacaoEstadoPedidoRepository;
 import br.transversa.backend.repository.ProdutoRepository;
 
 @Service
@@ -18,11 +20,17 @@ public class ProdutoService {
 	@Autowired
 	ProdutoRepository produtoRepository;
 	
+	@Autowired
+	ObservacaoEstadoPedidoRepository observacaoEstadoPedidoRepository;
+	
 	
 	public Produto save(Produto produto) {
 		return produtoRepository.save(produto);
 	}
 	
+	public ObservacaoEstadoPedido carregarReclamacaoImagem(Long id) {
+		return observacaoEstadoPedidoRepository.findObservacaoEstadoPedidoById(id);
+	}
 
 	public Produto findPesquisaPrecoByUuid(String uuid) {
 		return produtoRepository.findProdutoByUuid(uuid);
@@ -51,6 +59,12 @@ public class ProdutoService {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 //		System.out.println(nome);
 		return produtoRepository.findProdutoByNome(nome, pageable);
+	}
+	
+	public Produto findProdutoById(Long id) {
+
+
+		return produtoRepository.findProdutoById(id);
 	}
 
     

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.stereotype.Component;
 
 public class JwtAuthenticationResponse {
     private String idToken;
@@ -14,11 +12,13 @@ public class JwtAuthenticationResponse {
     private List<String> roles;
     private int expiresIn;
     private String email;
+    private String cpfCnpj;
 
     public JwtAuthenticationResponse(String idToken, 
     		Collection<? extends GrantedAuthority> collection, 
     		int expiresIn,
-    		String email) {
+    		String email,
+    		String cpfCnpj) {
         this.idToken = idToken;
         this.expiresIn = expiresIn/1000;
         roles = new ArrayList<>();
@@ -27,6 +27,7 @@ public class JwtAuthenticationResponse {
         	roles.add(grantedAuthority.getAuthority());  
 		});
         this.email = email;
+        this.cpfCnpj = cpfCnpj;
     }
 
     public String getIdToken() {
@@ -74,6 +75,15 @@ public class JwtAuthenticationResponse {
 		this.expiresIn = expiresIn;
 	}
 
+	public String getCpfCnpj() {
+		return cpfCnpj;
+	}
+
+	public void setCpfCnpj(String cpfCnpj) {
+		this.cpfCnpj = cpfCnpj;
+	}
+
+	
 
 	
 }

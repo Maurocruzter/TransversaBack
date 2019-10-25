@@ -89,9 +89,10 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
+        User user = userService.findCPFCnpJByEmail(authentication.getName());
 //        
 //        System.out.println("This is the new Version ");
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, authentication.getAuthorities(), expiresIn, authentication.getName()));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, authentication.getAuthorities(), expiresIn, authentication.getName(), user.getCpfCnpj()));
     }
 
 //    @RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json")

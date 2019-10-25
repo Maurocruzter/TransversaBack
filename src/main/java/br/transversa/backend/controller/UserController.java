@@ -1,20 +1,14 @@
 package br.transversa.backend.controller;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,20 +16,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Role;
 import br.transversa.backend.model.User;
 import br.transversa.backend.model.UserHasRole;
 import br.transversa.backend.payload.ApiResponse;
 import br.transversa.backend.security.JwtTokenProvider;
-import br.transversa.backend.service.ProdutoService;
 import br.transversa.backend.service.RoleService;
 import br.transversa.backend.service.UserHasRoleService;
 import br.transversa.backend.service.UserService;
@@ -65,6 +57,28 @@ public class UserController {
 	@Autowired
 	RoleService roleService;
 	
+	
+	@RequestMapping(value = "/user/alterarSenha", method = RequestMethod.POST)
+	ResponseEntity<?> alterarSenha( @RequestBody String senha) throws IOException{
+		
+		senha = senha.substring(10, senha.length()-2);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		User loggedUser = new User();
+        loggedUser.setId(Long.parseLong(auth.getName()));
+		
+//		@Modifying
+//		@Query("UPDATE Pedido p set p.isEntregue = :isEntregue where p.id = :id")
+//		int setPedidoEntregue(byte isEntregue, Long id);
+        loggedUser.setSenha(passwordEncoder.encode(senha));
+        
+        System.out.println(loggedUser.getSenha());
+		userService.ChangePassword(loggedUser.getSenha(), loggedUser.getId());
+
+        return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
+                    HttpStatus.CREATED);
+
+	}
 	
 	@RequestMapping(value = "/user/add", method = RequestMethod.POST)
 	ResponseEntity<?> registrarProduto(@RequestParam(name="file", required=false) MultipartFile file, 
@@ -175,8 +189,8 @@ public class UserController {
         
         //Placing createdBy
         user.setUser(loggedUser);
-        user.setSenha(senha);
-        user.setSenha(passwordEncoder.encode(user.getSenha()));
+//        user.setSenha(user.getCpfCnpj());
+        user.setSenha(passwordEncoder.encode(user.getCpfCnpj()));
 
         User result = userService.save(user);
         
@@ -212,6 +226,12 @@ public class UserController {
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
 
 		return userService.findAllUserByPage(pageNumber);
+	}
+	
+	@GetMapping(path = "/listUsersByRole/{role}")
+	List<UserHasRole> listUsersByRole(
+		@PathVariable(name = "role", required = false) Long role) {
+		return userService.listUsersByRole(role);
 	}
 	
 	@GetMapping(path = "/listAllUsers")

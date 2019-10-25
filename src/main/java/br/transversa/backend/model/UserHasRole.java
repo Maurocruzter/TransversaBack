@@ -30,9 +30,25 @@ public class UserHasRole implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="users_id")
 	private User user;
+	
+	@Transient
+	private Long userId;
+	
+	@Transient
+	private String nome;
 
 	public UserHasRole() {
 	}
+
+	
+
+
+	public UserHasRole(Long userId, String nome) {
+		super();
+		this.userId = userId;
+		this.nome = nome;
+	}
+
 
 
 
@@ -64,4 +80,33 @@ public class UserHasRole implements Serializable {
 		this.user = user;
 	}
 
+
+
+
+	public Long getUserId() {
+		return userId;
+	}
+
+
+
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+
+
+
+	public String getNome() {
+		return nome;
+	}
+
+
+
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	
 }

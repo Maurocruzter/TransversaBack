@@ -9,6 +9,8 @@ public class ListNovoPedidoRequest {
     List <NovoPedidoRequest> produtosList;
     
     Long cliente;
+    
+    String formaPagamento;
 
 	public List<NovoPedidoRequest> getProdutosList() {
 		return produtosList;
@@ -24,6 +26,14 @@ public class ListNovoPedidoRequest {
 
 	public void setCliente(Long cliente) {
 		this.cliente = cliente;
+	}
+
+	public String getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(String formaPagamento) {
+		this.formaPagamento = formaPagamento;
 	}
 
     

@@ -55,6 +55,12 @@ public class PedidosHasProduto implements Serializable {
 
 	@Transient
 	private byte isTransporte;
+	
+	@Transient
+	private byte isCancelado;
+
+	@Transient
+	private byte isEntregue;
 
 	
 	
@@ -77,7 +83,7 @@ public class PedidosHasProduto implements Serializable {
 	}
 	
 	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
-			byte isAprovado, byte isFinalizado, byte isTransporte) {
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue) {
 		super();
 		this.id = id;
 		this.preco = preco;
@@ -87,6 +93,8 @@ public class PedidosHasProduto implements Serializable {
 		this.isAprovado = isAprovado;
 		this.isFinalizado = isFinalizado;
 		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
 	}
 
 	public Long getId() {
@@ -179,6 +187,28 @@ public class PedidosHasProduto implements Serializable {
 
 	public void setIsTransporte(byte isTransporte) {
 		this.isTransporte = isTransporte;
+	}
+	
+	
+
+
+	public byte getIsCancelado() {
+		return isCancelado;
+	}
+
+
+	public void setIsCancelado(byte isCancelado) {
+		this.isCancelado = isCancelado;
+	}
+
+
+	public byte getIsEntregue() {
+		return isEntregue;
+	}
+
+
+	public void setIsEntregue(byte isEntregue) {
+		this.isEntregue = isEntregue;
 	}
 
 

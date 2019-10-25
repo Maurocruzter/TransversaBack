@@ -37,6 +37,18 @@ public class Pedido implements Serializable {
 
 	@Column(name="is_transporte")
 	private byte isTransporte;
+	
+	@Column(name="is_entregue")
+	private byte isEntregue;
+	
+	@Column(name="is_cancelado")
+	private byte isCancelado;
+	
+	@Column(name="forma_pagamento")
+	private int formaPagamento;
+	
+	@Column(name="cliente_reclamou_estado")
+	private int clienteReclamouEstado;
 
 	//bi-directional many-to-one association to EstadoPedido
 	@OneToMany(mappedBy="pedido")
@@ -89,9 +101,22 @@ public class Pedido implements Serializable {
 
 
 
+	
 
 	public byte getIsAprovado() {
 		return isAprovado;
+	}
+
+
+
+	public int getFormaPagamento() {
+		return formaPagamento;
+	}
+
+
+
+	public void setFormaPagamento(int formaPagamento) {
+		this.formaPagamento = formaPagamento;
 	}
 
 
@@ -122,6 +147,45 @@ public class Pedido implements Serializable {
 
 	public void setIsTransporte(byte isTransporte) {
 		this.isTransporte = isTransporte;
+	}
+
+	
+	
+
+
+	public byte getIsEntregue() {
+		return isEntregue;
+	}
+
+
+
+	public void setIsEntregue(byte isEntregue) {
+		this.isEntregue = isEntregue;
+	}
+
+
+
+	public byte getIsCancelado() {
+		return isCancelado;
+	}
+
+
+
+	public void setIsCancelado(byte isCancelado) {
+		this.isCancelado = isCancelado;
+	}
+
+	
+
+
+	public int getClienteReclamouEstado() {
+		return clienteReclamouEstado;
+	}
+
+
+
+	public void setClienteReclamouEstado(int clienteReclamouEstado) {
+		this.clienteReclamouEstado = clienteReclamouEstado;
 	}
 
 

@@ -95,6 +95,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                        .permitAll()
                     .antMatchers("/api/v1/produto/loadImage/**")
                         .permitAll()
+                    .antMatchers("/api/v1/pedido/loadImage/reclamacaoImagem/**")
+                        .permitAll()
                     .antMatchers("/api/v1/pesquisaPreco/loadImage/**")
                         .permitAll()
                     .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")
@@ -105,7 +107,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api2/test").hasRole("ADMIN")
                     .anyRequest()
                         .authenticated();
-
+        
         // Add our custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

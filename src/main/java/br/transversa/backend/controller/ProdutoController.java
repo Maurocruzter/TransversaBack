@@ -115,6 +115,13 @@ public class ProdutoController {
 
 	}
 	
+	@GetMapping(path = "/produto/searchById/{id}")
+	Produto searchProdutoById(@PathVariable(name = "id", required = true) Long id) {
+		
+		return produtoService.findProdutoById(id);
+
+	}
+	
 	
 	@GetMapping(path = "/listAllProdutos")
 	List<Produto> listAllProdutos() {

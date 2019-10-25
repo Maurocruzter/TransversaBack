@@ -10,14 +10,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.User;
+import br.transversa.backend.model.UserHasRole;
+import br.transversa.backend.repository.UserHasRoleRepository;
 import br.transversa.backend.repository.UserRepository;
 //import br.transversa.backend.repository.UsersRepository;
 import br.transversa.backend.security.JwtTokenProvider;
 
 @Service
+@Transactional
 public class UserService {
 	
 //	@Autowired
@@ -28,6 +32,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    UserHasRoleRepository userHasRoleRepository;
     
 
 //    @Autowired
@@ -65,6 +72,12 @@ public class UserService {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return userRepository.findUserAll(pageable);
 	}
+    
+    public List<UserHasRole> listUsersByRole(Long idRole) {
+//		Pageable pageable = PageRequest.of(pageNumber, 20);
+    	
+		return userHasRoleRepository.listUsersByRoleId(idRole);
+	}
 	
 	
 	public Page<User> findUserSearchNome(String nome, int pageNumber) {
@@ -85,10 +98,20 @@ public class UserService {
 	
 	public Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente) {
 		
-		System.out.println("Vendedor " + idVendedor);
-		System.out.println("Cliente " + idCliente);
+//		System.out.println("Vendedor " + idVendedor);
+//		System.out.println("Cliente " + idCliente);
 		return userRepository.findIfVendedorHasCliente(idVendedor, idCliente);
 	}
 
+	public User findCPFCnpJByEmail(String email) {
+		return userRepository.findUserCpfCnpjByEmail(email);
+	}
+
+
+
+	public void ChangePassword(String senha, Long id) {
+		userRepository.ChangePassword(senha, id);
+		
+	}
     
 }

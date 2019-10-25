@@ -9,5 +9,8 @@ public interface AppConstants {
 
     int MAX_PAGE_SIZE = 50;
 
+    final List<String> FORMA_PAGAMENTOS =  Arrays.asList("CARTAO", "BOLETO", "DEPOSITO", "TRANSFERENCIA"); 
+
+    
     final List<String> ROLES =  Arrays.asList("ROLE_VENDEDOR", "ROLE_ENTREGADOR", "ROLE_CLIENTE","ROLE_FORNECEDOR", "ROLE_ADMIN", "ROLE_BASE"); 
 }

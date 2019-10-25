@@ -3,6 +3,7 @@ package br.transversa.backend.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -49,4 +50,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	
 	@Query("select new User(u.id) from User u WHERE u.id = :idCliente AND u.user2.id = :idVendedor")
 	Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente);
+	
+	@Query("select new User(u.cpfCnpj) from User u WHERE u.email = :email")
+	User findUserCpfCnpjByEmail(String email);
+	
+	@Modifying
+	@Query("UPDATE User u set u.senha = :senha where u.id = :id")
+	void ChangePassword(String senha, Long id);
 }
