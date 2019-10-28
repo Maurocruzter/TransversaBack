@@ -55,6 +55,10 @@ public class Produto implements Serializable {
 	private Date dataAlterado;
 
 	private String descricao;
+	
+	private String dimensoes;
+	
+	private String peso;
 
 	@Column(name="file_type")
 	private String fileType;
@@ -422,6 +426,30 @@ public class Produto implements Serializable {
 
 	public void setPedidosHasProdutos(List<PedidosHasProduto> pedidosHasProdutos) {
 		this.pedidosHasProdutos = pedidosHasProdutos;
+	}
+
+
+
+	public String getDimensoes() {
+		return dimensoes;
+	}
+
+
+
+	public void setDimensoes(String dimensoes) {
+		this.dimensoes = dimensoes;
+	}
+
+
+
+	public String getPeso() {
+		return peso;
+	}
+
+
+
+	public void setPeso(String peso) {
+		this.peso = peso;
 	}
 	
 	

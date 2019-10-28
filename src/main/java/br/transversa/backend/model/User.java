@@ -146,6 +146,10 @@ public class User {
 	@OneToMany(mappedBy="user")
 	private List<Pesquisapreco> pesquisaprecos;
 	
+	//bi-directional many-to-one association to Pesquisapreco
+	@OneToMany(mappedBy="user")
+	private List<Automovel> automovels;
+	
 	
 	
 	

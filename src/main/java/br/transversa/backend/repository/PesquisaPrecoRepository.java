@@ -1,5 +1,7 @@
 package br.transversa.backend.repository;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,17 +21,18 @@ public interface PesquisaPrecoRepository extends JpaRepository<Pesquisapreco, Lo
 	
 	@Query(value = "select new Pesquisapreco(p.nome, p.data, p.fileType) from Pesquisapreco p WHERE p.uuid = :uuid")
 	Pesquisapreco findPesquisaprecoByUuid(String uuid);
+
 	
-	
-	@Query("select new Pesquisapreco(p.id, p.marca, p.nome, p.preco, p.uuid) from Pesquisapreco p WHERE p.id = :id")
+	@Query("select new Pesquisapreco(p.id, p.nome, p.preco, p.uuid, "
+			+ "p.marca, p.descricao, p.codigoBarras, p.razaoSocial, p.endereco) from Pesquisapreco p WHERE p.id = :id")
 	Pesquisapreco findPesquisaPrecoById(Long id);
 	
 	
-	@Query("select new Pesquisapreco(p.id, p.nome, p.preco, p.uuid) from Pesquisapreco p")
+	@Query("select new Pesquisapreco(p.id, p.nome, p.preco, p.uuid, p.marca) from Pesquisapreco p")
     Page<Pesquisapreco> findPesquisaPrecoAll(Pageable pageable);
 	
 	
-	@Query(value="SELECT new Pesquisapreco(p.id, p.marca, p.nome, p.preco, p.uuid) FROM Pesquisapreco p  "
+	@Query(value="SELECT new Pesquisapreco(p.id, p.nome, p.preco, p.uuid, p.marca) FROM Pesquisapreco p  "
 			+ "WHERE p.nome LIKE CONCAT('%',:nome,'%')")
 	Page<Pesquisapreco> findPesquisaPrecoByNome(@Param("nome") String nome, Pageable pageable);
 	

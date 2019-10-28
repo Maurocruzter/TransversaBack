@@ -2,8 +2,10 @@ package br.transversa.backend.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +56,21 @@ public class PesquisaPrecoController {
 	
 
 	@PostMapping(path = "/pesquisaPreco/add")
-	ResponseEntity<?> registrarProduto(@RequestParam("file") MultipartFile file, 
-			@RequestParam("nome") String nome, 
-			@RequestParam("marca") String marca,
-			@RequestParam("preco") BigDecimal preco) throws IOException{
+	ResponseEntity<?> registrarProduto(
+			@RequestParam String razaoSocial,
+			@RequestParam String endereco,
+			@RequestParam List<BigInteger> codigoBarras,
+			@RequestParam List<String> descricao,
+			@RequestParam List<String> marca,
+			@RequestParam List<String> nome,
+			@RequestParam List<BigDecimal> preco,
+			@RequestParam List<MultipartFile>  file
+			
+//			@RequestParam("preco") BigDecimal preco
+			) throws IOException{
 		
+		System.out.println("Entrou aqui");
+		System.out.println(nome);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
 		
@@ -66,28 +78,46 @@ public class PesquisaPrecoController {
 			return new ResponseEntity(new ApiResponse(true, "Produto Inválido!"), HttpStatus.FORBIDDEN);
 		}
 
+		
+		User loggedUser = new User();
+        loggedUser.setId(Long.parseLong(auth.getName()));
+		
+        List<Pesquisapreco> pesquisaPrecoList = new ArrayList<>();
+        
+        
+		for(int i = 0; i<descricao.size(); i++) {
+			
+			Pesquisapreco pesquisaPreco = new Pesquisapreco();
+			
+			pesquisaPreco.setCodigoBarras(codigoBarras.get(i));
+			pesquisaPreco.setData(file.get(i).getBytes());
+			pesquisaPreco.setFileType(file.get(i).getContentType());
+			pesquisaPreco.setDescricao(descricao.get(i));
+			pesquisaPreco.setEndereco(endereco);
+			pesquisaPreco.setMarca(marca.get(i));
+			pesquisaPreco.setNome(nome.get(i));
+			pesquisaPreco.setPreco(preco.get(i));
+			pesquisaPreco.setRazaoSocial(razaoSocial);
+			pesquisaPreco.setUser(loggedUser);
+			UUID uuid = UUID.randomUUID();
+			pesquisaPreco.setUuid(uuid.toString());
+			
+			pesquisaPrecoList.add(pesquisaPreco);
+		}
 		System.out.println("entra aqui?");
 		
-		Pesquisapreco pesquisaPreco = new Pesquisapreco();
 		
-		pesquisaPreco.setNome(nome);
-		pesquisaPreco.setMarca(marca);
-		pesquisaPreco.setPreco(preco);
-		pesquisaPreco.setData(file.getBytes());
-		pesquisaPreco.setFileType(file.getContentType());
+			
+//		UUID uuid = UUID.randomUUID();
+//		
+//		pesquisaPreco.setUuid(uuid.toString());
+//		
+//		
+//             
+//        //Placing createdBy		
+//        pesquisaPreco.setUser(loggedUser);
 		
-		UUID uuid = UUID.randomUUID();
-		
-		pesquisaPreco.setUuid(uuid.toString());
-		
-		
-        User loggedUser = new User();
-        loggedUser.setId(Long.parseLong(auth.getName()));
-        
-        //Placing createdBy		
-        pesquisaPreco.setUser(loggedUser);
-		
-		pesquisaPrecoService.save(pesquisaPreco);
+		pesquisaPrecoService.createBulk(pesquisaPrecoList);
 		//produtoService.save(produto);
         return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
                     HttpStatus.CREATED);
@@ -100,7 +130,7 @@ public class PesquisaPrecoController {
 	Page<Pesquisapreco> listProdutosByPage(
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
 
-		System.out.println("Estou aqui dentro");
+		System.out.println("11111");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 //		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
@@ -117,6 +147,7 @@ public class PesquisaPrecoController {
 	@GetMapping(path = "/pesquisaPreco/loadImage/{id}")
 	ResponseEntity<Resource> carregarProdutoImagem(@PathVariable(name = "id", required = false) String uuid) {
 		
+		System.out.println("22222");
 		Pesquisapreco produto = pesquisaPrecoService.findPesquisaPrecoByUuid(uuid);
 		
 		if(produto == null)
@@ -133,6 +164,8 @@ public class PesquisaPrecoController {
 	@GetMapping(path = "/pesquisaPreco/{id}")
 	Pesquisapreco carregarProduto(@PathVariable(name = "id", required = true) Long id) {
 		
+		System.out.println("33333");
+		System.out.println(id);
 		return pesquisaPrecoService.findPesquisaPrecoById(id);
 
 	}
@@ -141,6 +174,8 @@ public class PesquisaPrecoController {
 	Page<Pesquisapreco> searchProduto(@PathVariable(name = "nome", required = true) String nome,
 								@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 		
+		
+		System.out.println("4444");
 //		System.out.println("sfasfasfsa "+nome);
 //		return null;
 		//System.out.println(nome);
