@@ -54,6 +54,16 @@ public class AutomovelService {
 		return quilometragemRepository.findAutomovelByPage(pageable);
 	}
 
+	public List<Quilometragem> findAutomovelHistoricoQuilometragemById(Long idAutomovel) {
+		// TODO Auto-generated method stub
+		return quilometragemRepository.findAutomovelHistoricoQuilometragemById(idAutomovel);
+	}
+
+	public Quilometragem retrieveQuilometragemImageByIdQuilometragem(Long idQuilometragem) {
+		return quilometragemRepository.retrieveQuilometragemImageByIdQuilometragem(idQuilometragem);
+		
+	}
+
 	
 //	@Autowired
 //	ProdutoRepository produtoRepository;

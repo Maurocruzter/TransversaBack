@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import br.transversa.backend.model.Produto;
+import br.transversa.backend.model.Promocoes;
 
 
 @Repository
@@ -22,6 +23,9 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
 	@Query("select new Produto(p.id, p.nome, p.preco, p.uuid) from Produto p")
     Page<Produto> findProdutoAll(Pageable pageable);
+	
+	@Query("select new Promocoes(p.id) from Produto p")
+    Page<Promocoes> findProdutoAllRetrieveOnlyId(Pageable pageable);
 	
 	@Query(value = "select new Produto(p.nome, p.data, p.fileType) from Produto p WHERE p.uuid = :uuid")
 	Produto findProdutoByUuid(String uuid);

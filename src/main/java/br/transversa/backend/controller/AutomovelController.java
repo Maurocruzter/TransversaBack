@@ -68,15 +68,6 @@ public class AutomovelController {
 		User userAux = new User();
 		userAux.setId(Long.parseLong(auth.getName()));
 		quilometragemObject.setUser(userAux);
-		
-//		quilometragemObject.setUser(new User(Long.parseLong(auth.getName())));
-//		
-
-//
-//		
-//		
-////		Automovel automovelAux = new Automovel();
-////		automovelAux.setId(automovel.getId());
 		quilometragemObject.setAutomovel(new Automovel(automovel.getId()));
 
 
@@ -90,6 +81,12 @@ public class AutomovelController {
 	List<Automovel> findAllAutomoveis() {
 				
 		return automovelService.findAllAutomovel();	
+	}
+	
+	@GetMapping(path = "/automovel/id/{idAutomovel}")
+	List<Quilometragem> findAllAutomoveis( @PathVariable(name = "idAutomovel", required = false) Long idAutomovel) {
+		
+		return automovelService.findAutomovelHistoricoQuilometragemById(idAutomovel);	
 	}
 	
 	@GetMapping(path = "/automovel/page/{pageNumber}")
@@ -131,6 +128,19 @@ public class AutomovelController {
 
 		return new ResponseEntity(new ApiResponse(true, "Quilometragem adicionada com sucesso"), HttpStatus.CREATED);
 
+	}
+	
+	
+	@GetMapping(path = "/quilometragem/loadImage/quilometragemImagem/{id}")
+	ResponseEntity<Resource> carregarReclamacaoImagem(@PathVariable(name = "id", required = false) Long id) {
+		
+		Quilometragem quilometragem = automovelService.retrieveQuilometragemImageByIdQuilometragem(id);
+		
+		return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType("image/jpeg"))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "Quilometragem" + "\"")
+        .body(new ByteArrayResource(quilometragem.getData()));
+        		
 	}
 
 }

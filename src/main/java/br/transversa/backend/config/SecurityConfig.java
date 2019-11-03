@@ -97,6 +97,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         .permitAll()
                     .antMatchers("/api/v1/pedido/loadImage/reclamacaoImagem/**")
                         .permitAll()
+                    .antMatchers("/api/v1/quilometragem/loadImage/quilometragemImagem/**")
+                        .permitAll()
                     .antMatchers("/api/v1/pesquisaPreco/loadImage/**")
                         .permitAll()
                     .antMatchers("/api/user/checkUsernameAvailability", "/api/user/checkEmailAvailability")

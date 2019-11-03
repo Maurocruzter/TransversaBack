@@ -1,5 +1,6 @@
 package br.transversa.backend.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Produto;
+import br.transversa.backend.model.Promocoes;
 import br.transversa.backend.repository.ObservacaoEstadoPedidoRepository;
 import br.transversa.backend.repository.ProdutoRepository;
+import br.transversa.backend.repository.PromocoesRepository;
 
 @Service
 public class ProdutoService {
@@ -49,6 +52,14 @@ public class ProdutoService {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return produtoRepository.findProdutoAll(pageable);
 	}
+	
+	public Page<Promocoes> findAllProdutoByPageRetrieveOnlyId(int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return produtoRepository.findProdutoAllRetrieveOnlyId(pageable);
+	}
+	
+	
+	
 	
 	public List<Produto> findAllProdutos() {
 		return produtoRepository.findAllProdutos();

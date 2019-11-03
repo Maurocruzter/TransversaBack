@@ -34,6 +34,7 @@ import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Pedido;
 import br.transversa.backend.model.PedidosHasProduto;
 import br.transversa.backend.model.Produto;
+import br.transversa.backend.model.Promocoes;
 import br.transversa.backend.model.User;
 import br.transversa.backend.payload.ApiResponse;
 import br.transversa.backend.payload.ListNovoPedidoRequest;
@@ -42,6 +43,7 @@ import br.transversa.backend.payload.PedidoObservacaoRequest;
 import br.transversa.backend.service.CarrinhoService;
 import br.transversa.backend.service.PedidoService;
 import br.transversa.backend.service.ProdutoService;
+import br.transversa.backend.service.PromocaoService;
 import br.transversa.backend.service.UserService;
 import br.transversa.backend.util.AppConstants;
 
@@ -60,6 +62,9 @@ public class PedidoController {
 
 	@Autowired
 	ProdutoService produtoService;
+	
+	@Autowired
+	PromocaoService promocaoService;
 
 //	@PostMapping(path = "/pedidoCliente/novo")
 //	ResponseEntity fazerPedidoCliente() {
@@ -182,6 +187,8 @@ public class PedidoController {
 		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
 
 		BigDecimal total = new BigDecimal(0);
+		
+		Date date = new Date();
 
 		for (int i = 0; i < listNovoPedidoRequest.getProdutosList().size(); i++) {
 
@@ -191,22 +198,47 @@ public class PedidoController {
 				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
 			}
 
-			Optional<Produto> optionalProduto = produtoService
-					.findProdutoPrecoById(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			Promocoes promocao = promocaoService.findPromocoesByProdutoId(0,
+					listNovoPedidoRequest.getProdutosList().get(i).getId());
 
-			if (!optionalProduto.isPresent()) {
+			if (promocao == null) {
 				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
 			}
 
 			PedidosHasProduto pedidoHasProduto = new PedidosHasProduto();
 
 			pedidoHasProduto.setPedido(pedido);
-			pedidoHasProduto.setPreco(optionalProduto.get().getPreco());
+			pedidoHasProduto.setPreco(promocao.getPreco());
 			pedidoHasProduto.setQuantidade(quantidade);
-			optionalProduto.get().setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
-			pedidoHasProduto.setProduto(optionalProduto.get());
+//			optionalProduto.get().setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			Produto produtoAux = new Produto();
+			produtoAux.setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			pedidoHasProduto.setProduto(produtoAux);
+			
+			BigDecimal itemPrice;
+			
+			if(date.compareTo(promocao.getDataInicio()) > 0 && promocao.getDataFim().compareTo(date) > 0) {
+				
+				
+				pedidoHasProduto.setDesconto(promocao.getDesconto());
+				
+				if(promocao.getCompraMinima()<= quantidade) {
+				itemPrice = new BigDecimal(100).
+						subtract(promocao.getDesconto()).
+						divide(new BigDecimal(100)).
+						multiply(new BigDecimal(quantidade)).multiply(promocao.getPreco());
+				} else {
+					itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
+				}
+				
+	            
+			}
+			else {
+				itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
+			}
+			
 
-			int index = searchForRepeatedElements(pedidoHasProdutoList, optionalProduto.get().getId());
+			int index = searchForRepeatedElements(pedidoHasProdutoList, produtoAux.getId());
 
 			if (index == -1) {
 				pedidoHasProdutoList.add(pedidoHasProduto);
@@ -215,7 +247,7 @@ public class PedidoController {
 						.setQuantidade(pedidoHasProdutoList.get(index).getQuantidade() + quantidade);
 			}
 
-			BigDecimal itemPrice = optionalProduto.get().getPreco().multiply(new BigDecimal(quantidade));
+			
 			total = total.add(itemPrice);
 
 		}
@@ -256,8 +288,7 @@ public class PedidoController {
 		// Setting quem disparou vai pagar a compra
 		pedido.setUser2(loggedUser);
 
-		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
-
+		
 		BigDecimal total = new BigDecimal(0);
 
 		int indexPagamento = AppConstants.FORMA_PAGAMENTOS.indexOf(listNovoPedidoRequest.getFormaPagamento());
@@ -269,37 +300,61 @@ public class PedidoController {
 
 		pedido.setFormaPagamento(indexPagamento);
 
-//		System.out.println("A forma de PAgamento é!!!!!!!!!!!! " + pedido.getFormaPagamento());
-//		int a = 0;
-//		if (a == 0) {
-//			return null;
-//		}
+//		pedido.setFormaPagamento(indexPagamento);
+		// pedidoService.createOrUpdatePedido(pedido);
+		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
+		
+		Date date = new Date();
 
 		for (int i = 0; i < listNovoPedidoRequest.getProdutosList().size(); i++) {
 
 			int quantidade = listNovoPedidoRequest.getProdutosList().get(i).getQuantidade();
 
 			if (quantidade < 1) {
-				return new ResponseEntity(new ApiResponse(true, "Quantidade deve ser superior a 0!"),
-						HttpStatus.NOT_ACCEPTABLE);
+				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
 			}
 
-			Optional<Produto> optionalProduto = produtoService
-					.findProdutoPrecoById(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			Promocoes promocao = promocaoService.findPromocoesByProdutoId(0,
+					listNovoPedidoRequest.getProdutosList().get(i).getId());
 
-			if (!optionalProduto.isPresent()) {
-				return new ResponseEntity(new ApiResponse(true, "Produto Inválido!"), HttpStatus.NOT_ACCEPTABLE);
+			if (promocao == null) {
+				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
 			}
 
 			PedidosHasProduto pedidoHasProduto = new PedidosHasProduto();
 
 			pedidoHasProduto.setPedido(pedido);
-			pedidoHasProduto.setPreco(optionalProduto.get().getPreco());
+			pedidoHasProduto.setPreco(promocao.getPreco());
 			pedidoHasProduto.setQuantidade(quantidade);
-			optionalProduto.get().setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
-			pedidoHasProduto.setProduto(optionalProduto.get());
+//			optionalProduto.get().setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			Produto produtoAux = new Produto();
+			produtoAux.setId(listNovoPedidoRequest.getProdutosList().get(i).getId());
+			pedidoHasProduto.setProduto(produtoAux);
+			
+			BigDecimal itemPrice;
+			
+			if(date.compareTo(promocao.getDataInicio()) > 0 && promocao.getDataFim().compareTo(date) > 0) {
+				
+				
+				pedidoHasProduto.setDesconto(promocao.getDesconto());
+				
+				if(promocao.getCompraMinima()<= quantidade) {
+				itemPrice = new BigDecimal(100).
+						subtract(promocao.getDesconto()).
+						divide(new BigDecimal(100)).
+						multiply(new BigDecimal(quantidade)).multiply(promocao.getPreco());
+				} else {
+					itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
+				}
+				
+	            
+			}
+			else {
+				itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
+			}
+			
 
-			int index = searchForRepeatedElements(pedidoHasProdutoList, optionalProduto.get().getId());
+			int index = searchForRepeatedElements(pedidoHasProdutoList, produtoAux.getId());
 
 			if (index == -1) {
 				pedidoHasProdutoList.add(pedidoHasProduto);
@@ -308,7 +363,7 @@ public class PedidoController {
 						.setQuantidade(pedidoHasProdutoList.get(index).getQuantidade() + quantidade);
 			}
 
-			BigDecimal itemPrice = optionalProduto.get().getPreco().multiply(new BigDecimal(quantidade));
+			
 			total = total.add(itemPrice);
 
 		}
@@ -325,6 +380,7 @@ public class PedidoController {
 
 		pedidoService.createEstadoPedido(estadoPedido);
 
+
 		return new ResponseEntity(new ApiResponse(true, "" + pedido.getId()), HttpStatus.CREATED);
 
 	}
@@ -333,7 +389,6 @@ public class PedidoController {
 		for (int i = 0; i < pedidoHasProdutoList.size(); i++) {
 
 			if (pedidoHasProdutoList.get(i).getProduto().getId() == compareItem) {
-//				System.out.println("PRODUTO REPETIDO");
 				return i;
 			}
 
@@ -345,10 +400,6 @@ public class PedidoController {
 	ResponseEntity adicionarNotaObservacaoPedido(@PathVariable(name = "pedido", required = true) Long pedidoNumero,
 			@RequestBody PedidoObservacaoRequest observacao) {
 
-//		System.out.println(observacao.getEntregadorId());
-//		
-//		if(0 == 0)
-//			return null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User loggedUser = new User();
 		loggedUser.setId(Long.parseLong(auth.getName()));
@@ -524,7 +575,6 @@ public class PedidoController {
 		}
 
 		if (isVendedor) {
-//			System.out.println("ESTÀ A VIR AQUI");
 			return pedidoService.listarPedidosVendedor(loggedUser.getId(), pageNumber);
 		}
 		if (isCliente) {
@@ -653,6 +703,7 @@ public class PedidoController {
 				observacaoEstadoPedidoList = pedidoService
 						.findObservacaoEstadoPedidoByIdPedido(pedido);
 			}
+			
 			PedidoAndEstadoPedidoCustom pedidoCustom = new PedidoAndEstadoPedidoCustom(pedidosHasProdutoList,
 					estadoPedidoList, observacaoEstadoPedidoList);
 
@@ -708,7 +759,6 @@ public class PedidoController {
 //
 //		PedidoAndEstadoPedidoCustom pedidoCustom = new PedidoAndEstadoPedidoCustom(pedidosHasProdutoList,
 //				estadoPedidoList);
-////        System.out.println("Esteve aqui?");
 //
 //		return pedidoCustom;
 

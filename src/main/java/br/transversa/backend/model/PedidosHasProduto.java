@@ -26,6 +26,8 @@ public class PedidosHasProduto implements Serializable {
 	private Long id;
 
 	private BigDecimal preco;
+	
+	private BigDecimal desconto;
 
 	private int quantidade;
 
@@ -73,13 +75,15 @@ public class PedidosHasProduto implements Serializable {
 	}
 	
 	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid) {
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto) {
 		super();
 		this.id = id;
 		this.preco = preco;
 		this.produtoNome = produtoNome;
 		this.quantidade = quantidade;
 		this.uuid = uuid;
+		this.desconto = desconto;
+		System.out.println(desconto);
 	}
 	
 	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
@@ -95,6 +99,22 @@ public class PedidosHasProduto implements Serializable {
 		this.isTransporte = isTransporte;
 		this.isCancelado = isCancelado;
 		this.isEntregue = isEntregue;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+		this.desconto = desconto;
 	}
 
 	public Long getId() {
@@ -214,6 +234,18 @@ public class PedidosHasProduto implements Serializable {
 
 	public PedidosHasProduto() {
 	}
+
+
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+	
+	
 	
 
 }

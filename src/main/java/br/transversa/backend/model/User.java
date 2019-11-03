@@ -1,5 +1,6 @@
 package br.transversa.backend.model;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -150,7 +151,7 @@ public class User {
 	@OneToMany(mappedBy="user")
 	private List<Automovel> automovels;
 	
-	
+	private BigDecimal comissao;
 	
 	
 	
@@ -664,6 +665,16 @@ public class User {
 		pesquisapreco.setUser(null);
 
 		return pesquisapreco;
+	}
+
+
+	public BigDecimal getComissao() {
+		return comissao;
+	}
+
+
+	public void setComissao(BigDecimal comissao) {
+		this.comissao = comissao;
 	}
 	
 	

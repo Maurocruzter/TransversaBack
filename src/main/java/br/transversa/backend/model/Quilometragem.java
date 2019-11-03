@@ -165,6 +165,11 @@ public class Quilometragem implements Serializable {
 		this.matricula = matricula;
 	}
 
+	public Quilometragem(byte[] data) {
+		super();
+		this.data = data;
+	}
+
 	
 
 	
