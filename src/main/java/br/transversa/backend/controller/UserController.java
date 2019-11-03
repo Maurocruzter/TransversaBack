@@ -85,7 +85,7 @@ public class UserController {
 	ResponseEntity<?> registrarProduto(@RequestParam(name="file", required=false) MultipartFile file, 
 			@RequestParam("nome") String nome, 
 			@RequestParam("sobrenome") String sobrenome,
-			@RequestParam(name="comissao", required=false) BigDecimal comissao,
+			@RequestParam(name="comissao", required=false) String comissao,
 			@RequestParam("email") String email,
 			@RequestParam("cpf_cnpj") String cpfCnpj,
 			@RequestParam(name="latitude", required=false) Double latitude,
@@ -96,7 +96,6 @@ public class UserController {
 			@RequestParam("endereco") String endereco,
 			@RequestParam(name = "assignedTo", required=false) Long assignedTo) throws IOException{
 
-		System.out.println(comissao);
 		if(userService.existsByEmail(email)) {
             return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
@@ -194,7 +193,7 @@ public class UserController {
 		}
 		
 		if(isCadastrarVendedor) {
-			user.setComissao(comissao);
+			user.setComissao(new BigDecimal(comissao) );
 		}
 		
 		
