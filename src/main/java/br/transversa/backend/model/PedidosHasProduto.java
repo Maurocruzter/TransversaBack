@@ -63,6 +63,9 @@ public class PedidosHasProduto implements Serializable {
 
 	@Transient
 	private byte isEntregue;
+	
+	@Transient
+	private Long produtoId;
 
 	
 	
@@ -83,7 +86,17 @@ public class PedidosHasProduto implements Serializable {
 		this.quantidade = quantidade;
 		this.uuid = uuid;
 		this.desconto = desconto;
-		System.out.println(desconto);
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto, Long produtoId) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.desconto = desconto;
+		this.produtoId = produtoId;
 	}
 	
 	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
@@ -115,6 +128,24 @@ public class PedidosHasProduto implements Serializable {
 		this.isCancelado = isCancelado;
 		this.isEntregue = isEntregue;
 		this.desconto = desconto;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto,
+			Long produtoId) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+		this.desconto = desconto;
+		this.produtoId = produtoId;
 	}
 
 	public Long getId() {
@@ -243,6 +274,16 @@ public class PedidosHasProduto implements Serializable {
 
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+
+	public Long getProdutoId() {
+		return produtoId;
+	}
+
+
+	public void setProdutoId(Long produtoId) {
+		this.produtoId = produtoId;
 	}
 	
 	

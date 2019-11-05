@@ -23,17 +23,17 @@ public interface PedidoHasProdutoRepository extends JpaRepository<PedidosHasProd
 	
 	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade, php.produto.uuid,"
 			+ "php.pedido.isAprovado, php.pedido.isFinalizado, php.pedido.isTransporte, "
-			+ "php.pedido.isCancelado, php.pedido.isEntregue, php.desconto) "
+			+ "php.pedido.isCancelado, php.pedido.isEntregue, php.desconto, php.produto.id ) "
 			+ "from PedidosHasProduto php WHERE php.pedido.id = :idPedido")
 	List<PedidosHasProduto> findPedidoDetalhesByIdPedidoAndIdClienteReturnUUID(Long idPedido);
 	
-	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade, php.produto.uuid, php.desconto) "
+	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade, php.produto.uuid, php.desconto, php.produto.id) "
 			+ "from PedidosHasProduto php WHERE php.pedido.id = :idPedido AND php.pedido.user2.user2.id = :idFuncionario")
 	List<PedidosHasProduto> findPedidoDetalhesByIdPedidoAndIdFuncionarioReturnUUID(Long idFuncionario, Long idPedido);
 	
 	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade, php.produto.uuid,"
 			+ "php.pedido.isAprovado, php.pedido.isFinalizado, php.pedido.isTransporte, "
-			+ "php.pedido.isCancelado, php.pedido.isEntregue, php.desconto) "
+			+ "php.pedido.isCancelado, php.pedido.isEntregue, php.desconto, php.produto.id ) "
 			+ "from PedidosHasProduto php WHERE php.pedido.id = :idPedido")
 	List<PedidosHasProduto> findPedidoDetalhesByIdPedidoReturnUUID(Long idPedido);
 	 

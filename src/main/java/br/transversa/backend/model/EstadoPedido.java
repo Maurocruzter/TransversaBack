@@ -84,6 +84,9 @@ public class EstadoPedido implements Serializable {
 	
 	@Transient
 	private int clienteReclamouEstado;
+	
+	@Transient
+	private Long idProduto;
 
 	public EstadoPedido() {
 	}
@@ -133,6 +136,24 @@ public class EstadoPedido implements Serializable {
 		this.observacao = observacao;
 		this.clienteReclamouEstado = clienteReclamouEstado;
 		this.includesPhoto = includesPhoto;
+	}
+	
+	public EstadoPedido(Long id, String nomeVendedor, 
+			Long idVendedor, String nomeCliente, 
+			Long idCliente, Date dataAdicionado,
+			String observacao, int clienteReclamouEstado, byte includesPhoto,
+			Long idProduto) {
+		super();
+		this.id = id;
+		this.nomeVendedor = nomeVendedor;
+		this.idVendedor = idVendedor;
+		this.nomeCliente = nomeCliente;
+		this.idCliente = idCliente;
+		this.dataAdicionado = (Timestamp) dataAdicionado;
+		this.observacao = observacao;
+		this.clienteReclamouEstado = clienteReclamouEstado;
+		this.includesPhoto = includesPhoto;
+		this.idProduto = idProduto;
 	}
 
 	public EstadoPedido(Long id,Date dataAdicionado, int currestado,
@@ -425,6 +446,22 @@ public class EstadoPedido implements Serializable {
 
 	public void setIdPedido(Long idPedido) {
 		this.idPedido = idPedido;
+	}
+
+
+
+
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+
+
+
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
 	}
 
 	
