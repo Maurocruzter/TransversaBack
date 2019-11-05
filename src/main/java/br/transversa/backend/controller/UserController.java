@@ -187,7 +187,9 @@ public class UserController {
 			} else {
 				User userAux = new User();
 				userAux.setId(assignedTo);
-				user.setUser2(loggedUser);
+				System.out.println(assignedTo);
+				System.out.println(userAux.getId());
+				user.setUser2(userAux);
 			}
 			
 		}
@@ -249,6 +251,12 @@ public class UserController {
 	List<User> listAllUsers() {
 
 		return userService.findAllUsers();
+	}
+	
+	@GetMapping(path = "/listAllVendedores")
+	List<UserHasRole> listAllVendedores() {
+
+		return userService.findAllVendedores();
 	}
 	
 	

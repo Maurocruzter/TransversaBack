@@ -228,12 +228,14 @@ public class PedidoController {
 						divide(new BigDecimal(100)).
 						multiply(new BigDecimal(quantidade)).multiply(promocao.getPreco());
 				} else {
+					pedidoHasProduto.setDesconto(new BigDecimal(0));
 					itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
 				}
 				
 	            
 			}
 			else {
+				pedidoHasProduto.setDesconto(new BigDecimal(0));
 				itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
 			}
 			
@@ -344,12 +346,14 @@ public class PedidoController {
 						divide(new BigDecimal(100)).
 						multiply(new BigDecimal(quantidade)).multiply(promocao.getPreco());
 				} else {
+					pedidoHasProduto.setDesconto(new BigDecimal(0));
 					itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
 				}
 				
 	            
 			}
 			else {
+				pedidoHasProduto.setDesconto(new BigDecimal(0));
 				itemPrice = promocao.getPreco().multiply(new BigDecimal(quantidade));
 			}
 			

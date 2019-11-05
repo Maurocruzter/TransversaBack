@@ -92,6 +92,10 @@ public class UserService {
 		return userRepository.findAllUsers();
 	}
 	
+	public List<UserHasRole> findAllVendedores() {
+		return userHasRoleRepository.listUsersByRoleId(new Long(1));
+	}
+	
 	public List<User> listAllClientesDoUser(Long id) {
 		return userRepository.listAllClientesDoUser(id);
 	}
