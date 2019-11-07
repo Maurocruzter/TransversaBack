@@ -11,18 +11,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 
 
 @Entity
@@ -30,6 +31,1001 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @NamedQuery(name="User.findAll", query="SELECT u FROM User u")
 @JsonInclude(value = Include.NON_EMPTY)
 public class User {
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id_user", unique=true, nullable=false)
+	private Long id;
+
+	@Column(nullable=false)
+	private byte ativo;
+
+	@Column(length=45)
+	private String bairro;
+
+	@Column(length=13)
+	private String celular;
+
+	@Column(length=15)
+	private String cep;
+
+	@Column(length=35)
+	private String cidade;
+
+	@Column(precision=13, scale=2)
+	private BigDecimal comissao;
+
+	@Column(name="cpf", nullable=false, length=25)
+	private String cpf;
+	
+	@Column(name="cnpj", nullable=false, length=25)
+	private String cnpj;
+
+	@Column(name="data_adicionado_user", nullable=false)
+	private Timestamp dataAdicionadoUser;
+
+	@Column(nullable=false, length=45)
+	private String email;
+
+	@Column(name="file_type", length=15)
+	private String fileType;
+
+	@Column(length=13)
+	private String fixo;
+
+
+	@Column(name="foto_documento")
+	private byte[] fotoDocumento;
+
+	@Lob
+	@Column(name="foto_estabelecimento")
+	private byte[] fotoEstabelecimento;
+
+	@Column(name="inscricao_estadual", length=15)
+	private String inscricaoEstadual;
+
+	private Double latitude;
+
+	@Column(length=45)
+	private String logradouro;
+
+	private Double longitude;
+
+	@Column(name="nome_fantasia", nullable=false, length=45)
+	private String sobrenome;
+
+	@Column(length=45)
+	private String observacao;
+
+	@Column(name="ponto_referencia1", length=45)
+	private String pontoReferencia1;
+
+	@Column(name="ponto_referencia2", length=45)
+	private String pontoReferencia2;
+
+	@Column(name="razao_social", nullable=false, length=45)
+	private String nome;
+
+	@Column(nullable=false, length=80)
+	private String senha;
+
+	@GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+	@Column(length=45)
+	private String uuid;
+	
+	@Column(name="tipo_estabelecimento", length=45)
+	private Integer tipoEstabelecimento;
+
+	@Column(nullable=false, length=13)
+	private String whatsapp;
+
+	//bi-directional many-to-one association to Automovel
+	@OneToMany(mappedBy="user")
+	private List<Automovel> automovels;
+
+	//bi-directional many-to-one association to Carrinho
+	@OneToMany(mappedBy="user1")
+	private List<Carrinho> carrinhos1;
+
+	//bi-directional many-to-one association to Carrinho
+	@OneToMany(mappedBy="user2")
+	private List<Carrinho> carrinhos2;
+
+	//bi-directional many-to-one association to EstadoPedido
+	@OneToMany(mappedBy="user")
+	private List<EstadoPedido> estadoPedidos;
+
+	//bi-directional many-to-one association to Pedido
+	@OneToMany(mappedBy="user1")
+	private List<Pedido> pedidos1;
+
+	//bi-directional many-to-one association to Pedido
+	@OneToMany(mappedBy="user2")
+	private List<Pedido> pedidos2;
+
+	//bi-directional many-to-one association to Pesquisapreco
+	@OneToMany(mappedBy="user")
+	private List<Pesquisapreco> pesquisaprecos;
+
+	//bi-directional many-to-one association to ProdutoHasTipoProdutosSubstituto
+	@OneToMany(mappedBy="user")
+	private List<ProdutoHasTipoProdutosSubstituto> produtoHasTipoProdutosSubstitutos;
+
+	//bi-directional many-to-one association to Produto
+	@OneToMany(mappedBy="user")
+	private List<Produto> produtos;
+
+	//bi-directional many-to-one association to ProdutosHasTipoProduto
+	@OneToMany(mappedBy="user")
+	private List<ProdutosHasTipoProduto> produtosHasTipoProdutos;
+
+	//bi-directional many-to-one association to ProdutosHasTipoProdutosComplementar
+	@OneToMany(mappedBy="user")
+	private List<ProdutosHasTipoProdutosComplementar> produtosHasTipoProdutosComplementars;
+
+	//bi-directional many-to-one association to Promocoe
+	@OneToMany(mappedBy="user")
+	private List<Promocoes> promocoes;
+
+	//bi-directional many-to-one association to Quilometragem
+	@OneToMany(mappedBy="user")
+	private List<Quilometragem> quilometragems;
+
+	//bi-directional many-to-one association to TipoProduto
+	@OneToMany(mappedBy="user")
+	private List<TipoProduto> tipoProdutos;
+
+	//bi-directional many-to-one association to UserHasRole
+	@OneToMany(mappedBy="user")
+	private List<UserHasRole> userHasRoles;
+
+	//bi-directional many-to-many association to Pedido
+	@ManyToMany
+	@JoinTable(
+		name="pedidos_has_users"
+		, joinColumns={
+			@JoinColumn(name="users_id_user", nullable=false)
+			}
+		, inverseJoinColumns={
+			@JoinColumn(name="pedidos_id_pedidos", nullable=false)
+			}
+		)
+	private List<Pedido> pedidos3;
+
+	//bi-directional many-to-one association to User
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="created_by_id")
+	private User user1;
+
+	//bi-directional many-to-one association to User
+	@OneToMany(mappedBy="user1")
+	private List<User> users1;
+
+	//bi-directional many-to-one association to User
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="assigned_to_id")
+	private User user2;
+
+	//bi-directional many-to-one association to User
+	@OneToMany(mappedBy="user2")
+	private List<User> users2;
+
+	//bi-directional many-to-one association to Venda
+	@OneToMany(mappedBy="user1")
+	private List<Venda> vendas1;
+
+	//bi-directional many-to-one association to Venda
+	@OneToMany(mappedBy="user2")
+	private List<Venda> vendas2;
+
+	//bi-directional many-to-one association to EntregadorPedido
+	@OneToMany(mappedBy="user")
+	private List<EntregadorPedido> entregadorPedidos;
+
+	public User() {
+	}
+	
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+
+
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+
+
+
+	public byte getAtivo() {
+		return ativo;
+	}
+
+
+
+	public void setAtivo(byte ativo) {
+		this.ativo = ativo;
+	}
+
+
+
+	public String getBairro() {
+		return this.bairro;
+	}
+
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
+
+	public String getCelular() {
+		return this.celular;
+	}
+
+	public void setCelular(String celular) {
+		this.celular = celular;
+	}
+
+	public String getCep() {
+		return this.cep;
+	}
+
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
+
+	public String getCidade() {
+		return this.cidade;
+	}
+
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
+
+	public BigDecimal getComissao() {
+		return this.comissao;
+	}
+
+	public void setComissao(BigDecimal comissao) {
+		this.comissao = comissao;
+	}
+
+
+	public String getCpf() {
+		return cpf;
+	}
+
+
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
+
+
+
+	public String getCnpj() {
+		return cnpj;
+	}
+
+
+
+	public void setCnpj(String cnpj) {
+		this.cnpj = cnpj;
+	}
+
+
+
+	public Timestamp getDataAdicionadoUser() {
+		return this.dataAdicionadoUser;
+	}
+
+	public void setDataAdicionadoUser(Timestamp dataAdicionadoUser) {
+		this.dataAdicionadoUser = dataAdicionadoUser;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getFileType() {
+		return this.fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public String getFixo() {
+		return this.fixo;
+	}
+
+	public void setFixo(String fixo) {
+		this.fixo = fixo;
+	}
+
+
+
+	public byte[] getFotoDocumento() {
+		return fotoDocumento;
+	}
+
+
+
+	public void setFotoDocumento(byte[] fotoDocumento) {
+		this.fotoDocumento = fotoDocumento;
+	}
+
+
+
+	public byte[] getFotoEstabelecimento() {
+		return fotoEstabelecimento;
+	}
+
+
+
+	public void setFotoEstabelecimento(byte[] fotoEstabelecimento) {
+		this.fotoEstabelecimento = fotoEstabelecimento;
+	}
+
+
+
+	public String getInscricaoEstadual() {
+		return this.inscricaoEstadual;
+	}
+
+	public void setInscricaoEstadual(String inscricaoEstadual) {
+		this.inscricaoEstadual = inscricaoEstadual;
+	}
+
+	public Double getLatitude() {
+		return this.latitude;
+	}
+
+	public void setLatitude(Double latitude) {
+		this.latitude = latitude;
+	}
+
+	public String getLogradouro() {
+		return this.logradouro;
+	}
+
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
+
+	public Double getLongitude() {
+		return this.longitude;
+	}
+
+	public void setLongitude(Double longitude) {
+		this.longitude = longitude;
+	}
+
+
+	public String getObservacao() {
+		return this.observacao;
+	}
+
+	public void setObservacao(String observacao) {
+		this.observacao = observacao;
+	}
+
+	public String getPontoReferencia1() {
+		return this.pontoReferencia1;
+	}
+
+	public void setPontoReferencia1(String pontoReferencia1) {
+		this.pontoReferencia1 = pontoReferencia1;
+	}
+
+	public String getPontoReferencia2() {
+		return this.pontoReferencia2;
+	}
+
+	public void setPontoReferencia2(String pontoReferencia2) {
+		this.pontoReferencia2 = pontoReferencia2;
+	}
+
+	
+	
+
+	public String getSobrenome() {
+		return sobrenome;
+	}
+
+
+
+
+	public void setSobrenome(String sobrenome) {
+		this.sobrenome = sobrenome;
+	}
+
+
+
+
+	public String getNome() {
+		return nome;
+	}
+
+
+
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+
+
+
+	public String getSenha() {
+		return this.senha;
+	}
+
+	public void setSenha(String senha) {
+		this.senha = senha;
+	}
+
+	public String getUuid() {
+		return this.uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public String getWhatsapp() {
+		return this.whatsapp;
+	}
+
+	public void setWhatsapp(String whatsapp) {
+		this.whatsapp = whatsapp;
+	}
+
+	public List<Automovel> getAutomovels() {
+		return this.automovels;
+	}
+
+	public void setAutomovels(List<Automovel> automovels) {
+		this.automovels = automovels;
+	}
+
+	public Automovel addAutomovel(Automovel automovel) {
+		getAutomovels().add(automovel);
+		automovel.setUser(this);
+
+		return automovel;
+	}
+
+	public Automovel removeAutomovel(Automovel automovel) {
+		getAutomovels().remove(automovel);
+		automovel.setUser(null);
+
+		return automovel;
+	}
+
+	public List<Carrinho> getCarrinhos1() {
+		return this.carrinhos1;
+	}
+
+	public void setCarrinhos1(List<Carrinho> carrinhos1) {
+		this.carrinhos1 = carrinhos1;
+	}
+
+	public Carrinho addCarrinhos1(Carrinho carrinhos1) {
+		getCarrinhos1().add(carrinhos1);
+		carrinhos1.setUser1(this);
+
+		return carrinhos1;
+	}
+
+	public Carrinho removeCarrinhos1(Carrinho carrinhos1) {
+		getCarrinhos1().remove(carrinhos1);
+		carrinhos1.setUser1(null);
+
+		return carrinhos1;
+	}
+
+	public List<Carrinho> getCarrinhos2() {
+		return this.carrinhos2;
+	}
+
+	public void setCarrinhos2(List<Carrinho> carrinhos2) {
+		this.carrinhos2 = carrinhos2;
+	}
+
+	public Carrinho addCarrinhos2(Carrinho carrinhos2) {
+		getCarrinhos2().add(carrinhos2);
+		carrinhos2.setUser2(this);
+
+		return carrinhos2;
+	}
+
+	public Carrinho removeCarrinhos2(Carrinho carrinhos2) {
+		getCarrinhos2().remove(carrinhos2);
+		carrinhos2.setUser2(null);
+
+		return carrinhos2;
+	}
+
+	public List<EstadoPedido> getEstadoPedidos() {
+		return this.estadoPedidos;
+	}
+
+	public void setEstadoPedidos(List<EstadoPedido> estadoPedidos) {
+		this.estadoPedidos = estadoPedidos;
+	}
+
+	public EstadoPedido addEstadoPedido(EstadoPedido estadoPedido) {
+		getEstadoPedidos().add(estadoPedido);
+		estadoPedido.setUser(this);
+
+		return estadoPedido;
+	}
+
+	public EstadoPedido removeEstadoPedido(EstadoPedido estadoPedido) {
+		getEstadoPedidos().remove(estadoPedido);
+		estadoPedido.setUser(null);
+
+		return estadoPedido;
+	}
+
+	public List<Pedido> getPedidos1() {
+		return this.pedidos1;
+	}
+
+	public void setPedidos1(List<Pedido> pedidos1) {
+		this.pedidos1 = pedidos1;
+	}
+
+	public Pedido addPedidos1(Pedido pedidos1) {
+		getPedidos1().add(pedidos1);
+		pedidos1.setUser1(this);
+
+		return pedidos1;
+	}
+
+	public Pedido removePedidos1(Pedido pedidos1) {
+		getPedidos1().remove(pedidos1);
+		pedidos1.setUser1(null);
+
+		return pedidos1;
+	}
+
+	public List<Pedido> getPedidos2() {
+		return this.pedidos2;
+	}
+
+	public void setPedidos2(List<Pedido> pedidos2) {
+		this.pedidos2 = pedidos2;
+	}
+
+	public Pedido addPedidos2(Pedido pedidos2) {
+		getPedidos2().add(pedidos2);
+		pedidos2.setUser2(this);
+
+		return pedidos2;
+	}
+
+	public Pedido removePedidos2(Pedido pedidos2) {
+		getPedidos2().remove(pedidos2);
+		pedidos2.setUser2(null);
+
+		return pedidos2;
+	}
+
+	public List<Pesquisapreco> getPesquisaprecos() {
+		return this.pesquisaprecos;
+	}
+
+	public void setPesquisaprecos(List<Pesquisapreco> pesquisaprecos) {
+		this.pesquisaprecos = pesquisaprecos;
+	}
+
+	public Pesquisapreco addPesquisapreco(Pesquisapreco pesquisapreco) {
+		getPesquisaprecos().add(pesquisapreco);
+		pesquisapreco.setUser(this);
+
+		return pesquisapreco;
+	}
+
+	public Pesquisapreco removePesquisapreco(Pesquisapreco pesquisapreco) {
+		getPesquisaprecos().remove(pesquisapreco);
+		pesquisapreco.setUser(null);
+
+		return pesquisapreco;
+	}
+
+	public List<ProdutoHasTipoProdutosSubstituto> getProdutoHasTipoProdutosSubstitutos() {
+		return this.produtoHasTipoProdutosSubstitutos;
+	}
+
+	public void setProdutoHasTipoProdutosSubstitutos(List<ProdutoHasTipoProdutosSubstituto> produtoHasTipoProdutosSubstitutos) {
+		this.produtoHasTipoProdutosSubstitutos = produtoHasTipoProdutosSubstitutos;
+	}
+
+	public ProdutoHasTipoProdutosSubstituto addProdutoHasTipoProdutosSubstituto(ProdutoHasTipoProdutosSubstituto produtoHasTipoProdutosSubstituto) {
+		getProdutoHasTipoProdutosSubstitutos().add(produtoHasTipoProdutosSubstituto);
+		produtoHasTipoProdutosSubstituto.setUser(this);
+
+		return produtoHasTipoProdutosSubstituto;
+	}
+
+	public ProdutoHasTipoProdutosSubstituto removeProdutoHasTipoProdutosSubstituto(ProdutoHasTipoProdutosSubstituto produtoHasTipoProdutosSubstituto) {
+		getProdutoHasTipoProdutosSubstitutos().remove(produtoHasTipoProdutosSubstituto);
+		produtoHasTipoProdutosSubstituto.setUser(null);
+
+		return produtoHasTipoProdutosSubstituto;
+	}
+
+	public List<Produto> getProdutos() {
+		return this.produtos;
+	}
+
+	public void setProdutos(List<Produto> produtos) {
+		this.produtos = produtos;
+	}
+
+	public Produto addProduto(Produto produto) {
+		getProdutos().add(produto);
+		produto.setUser(this);
+
+		return produto;
+	}
+
+	public Produto removeProduto(Produto produto) {
+		getProdutos().remove(produto);
+		produto.setUser(null);
+
+		return produto;
+	}
+
+	public List<ProdutosHasTipoProduto> getProdutosHasTipoProdutos() {
+		return this.produtosHasTipoProdutos;
+	}
+
+	public void setProdutosHasTipoProdutos(List<ProdutosHasTipoProduto> produtosHasTipoProdutos) {
+		this.produtosHasTipoProdutos = produtosHasTipoProdutos;
+	}
+
+	public ProdutosHasTipoProduto addProdutosHasTipoProduto(ProdutosHasTipoProduto produtosHasTipoProduto) {
+		getProdutosHasTipoProdutos().add(produtosHasTipoProduto);
+		produtosHasTipoProduto.setUser(this);
+
+		return produtosHasTipoProduto;
+	}
+
+	public ProdutosHasTipoProduto removeProdutosHasTipoProduto(ProdutosHasTipoProduto produtosHasTipoProduto) {
+		getProdutosHasTipoProdutos().remove(produtosHasTipoProduto);
+		produtosHasTipoProduto.setUser(null);
+
+		return produtosHasTipoProduto;
+	}
+
+	public List<ProdutosHasTipoProdutosComplementar> getProdutosHasTipoProdutosComplementars() {
+		return this.produtosHasTipoProdutosComplementars;
+	}
+
+	public void setProdutosHasTipoProdutosComplementars(List<ProdutosHasTipoProdutosComplementar> produtosHasTipoProdutosComplementars) {
+		this.produtosHasTipoProdutosComplementars = produtosHasTipoProdutosComplementars;
+	}
+
+	public ProdutosHasTipoProdutosComplementar addProdutosHasTipoProdutosComplementar(ProdutosHasTipoProdutosComplementar produtosHasTipoProdutosComplementar) {
+		getProdutosHasTipoProdutosComplementars().add(produtosHasTipoProdutosComplementar);
+		produtosHasTipoProdutosComplementar.setUser(this);
+
+		return produtosHasTipoProdutosComplementar;
+	}
+
+	public ProdutosHasTipoProdutosComplementar removeProdutosHasTipoProdutosComplementar(ProdutosHasTipoProdutosComplementar produtosHasTipoProdutosComplementar) {
+		getProdutosHasTipoProdutosComplementars().remove(produtosHasTipoProdutosComplementar);
+		produtosHasTipoProdutosComplementar.setUser(null);
+
+		return produtosHasTipoProdutosComplementar;
+	}
+
+	public List<Promocoes> getPromocoes() {
+		return this.promocoes;
+	}
+
+	public void setPromocoes(List<Promocoes> promocoes) {
+		this.promocoes = promocoes;
+	}
+
+	public Promocoes addPromocoe(Promocoes promocoe) {
+		getPromocoes().add(promocoe);
+		promocoe.setUser(this);
+
+		return promocoe;
+	}
+
+	public Promocoes removePromocoe(Promocoes promocoe) {
+		getPromocoes().remove(promocoe);
+		promocoe.setUser(null);
+
+		return promocoe;
+	}
+
+	public List<Quilometragem> getQuilometragems() {
+		return this.quilometragems;
+	}
+
+	public void setQuilometragems(List<Quilometragem> quilometragems) {
+		this.quilometragems = quilometragems;
+	}
+
+	public Quilometragem addQuilometragem(Quilometragem quilometragem) {
+		getQuilometragems().add(quilometragem);
+		quilometragem.setUser(this);
+
+		return quilometragem;
+	}
+
+	public Quilometragem removeQuilometragem(Quilometragem quilometragem) {
+		getQuilometragems().remove(quilometragem);
+		quilometragem.setUser(null);
+
+		return quilometragem;
+	}
+
+	public List<TipoProduto> getTipoProdutos() {
+		return this.tipoProdutos;
+	}
+
+	public void setTipoProdutos(List<TipoProduto> tipoProdutos) {
+		this.tipoProdutos = tipoProdutos;
+	}
+
+	public TipoProduto addTipoProduto(TipoProduto tipoProduto) {
+		getTipoProdutos().add(tipoProduto);
+		tipoProduto.setUser(this);
+
+		return tipoProduto;
+	}
+
+	public TipoProduto removeTipoProduto(TipoProduto tipoProduto) {
+		getTipoProdutos().remove(tipoProduto);
+		tipoProduto.setUser(null);
+
+		return tipoProduto;
+	}
+
+	public List<UserHasRole> getUserHasRoles() {
+		return this.userHasRoles;
+	}
+
+	public void setUserHasRoles(List<UserHasRole> userHasRoles) {
+		this.userHasRoles = userHasRoles;
+	}
+
+	public UserHasRole addUserHasRole(UserHasRole userHasRole) {
+		getUserHasRoles().add(userHasRole);
+		userHasRole.setUser(this);
+
+		return userHasRole;
+	}
+
+	public UserHasRole removeUserHasRole(UserHasRole userHasRole) {
+		getUserHasRoles().remove(userHasRole);
+		userHasRole.setUser(null);
+
+		return userHasRole;
+	}
+
+	public List<Pedido> getPedidos3() {
+		return this.pedidos3;
+	}
+
+	public void setPedidos3(List<Pedido> pedidos3) {
+		this.pedidos3 = pedidos3;
+	}
+
+	public User getUser1() {
+		return this.user1;
+	}
+
+	public void setUser1(User user1) {
+		this.user1 = user1;
+	}
+
+	public List<User> getUsers1() {
+		return this.users1;
+	}
+
+	public void setUsers1(List<User> users1) {
+		this.users1 = users1;
+	}
+
+	public User addUsers1(User users1) {
+		getUsers1().add(users1);
+		users1.setUser1(this);
+
+		return users1;
+	}
+
+	public User removeUsers1(User users1) {
+		getUsers1().remove(users1);
+		users1.setUser1(null);
+
+		return users1;
+	}
+
+	public User getUser2() {
+		return this.user2;
+	}
+
+	public void setUser2(User user2) {
+		this.user2 = user2;
+	}
+
+	public List<User> getUsers2() {
+		return this.users2;
+	}
+
+	public void setUsers2(List<User> users2) {
+		this.users2 = users2;
+	}
+
+	public User addUsers2(User users2) {
+		getUsers2().add(users2);
+		users2.setUser2(this);
+
+		return users2;
+	}
+
+	public User removeUsers2(User users2) {
+		getUsers2().remove(users2);
+		users2.setUser2(null);
+
+		return users2;
+	}
+
+	public List<Venda> getVendas1() {
+		return this.vendas1;
+	}
+
+	public void setVendas1(List<Venda> vendas1) {
+		this.vendas1 = vendas1;
+	}
+
+	public Venda addVendas1(Venda vendas1) {
+		getVendas1().add(vendas1);
+		vendas1.setUser1(this);
+
+		return vendas1;
+	}
+
+	public Venda removeVendas1(Venda vendas1) {
+		getVendas1().remove(vendas1);
+		vendas1.setUser1(null);
+
+		return vendas1;
+	}
+
+	public List<Venda> getVendas2() {
+		return this.vendas2;
+	}
+
+	public void setVendas2(List<Venda> vendas2) {
+		this.vendas2 = vendas2;
+	}
+
+	public Venda addVendas2(Venda vendas2) {
+		getVendas2().add(vendas2);
+		vendas2.setUser2(this);
+
+		return vendas2;
+	}
+
+	public Venda removeVendas2(Venda vendas2) {
+		getVendas2().remove(vendas2);
+		vendas2.setUser2(null);
+
+		return vendas2;
+	}
+
+	public List<EntregadorPedido> getEntregadorPedidos() {
+		return this.entregadorPedidos;
+	}
+
+	public void setEntregadorPedidos(List<EntregadorPedido> entregadorPedidos) {
+		this.entregadorPedidos = entregadorPedidos;
+	}
+
+	public EntregadorPedido addEntregadorPedido(EntregadorPedido entregadorPedido) {
+		getEntregadorPedidos().add(entregadorPedido);
+		entregadorPedido.setUser(this);
+
+		return entregadorPedido;
+	}
+
+	public EntregadorPedido removeEntregadorPedido(EntregadorPedido entregadorPedido) {
+		getEntregadorPedidos().remove(entregadorPedido);
+		entregadorPedido.setUser(null);
+
+		return entregadorPedido;
+	}
+	
+	public User(String cpf) {
+		super();
+		this.cpf = cpf;
+	}
+
+
+	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,     
+			Double latitude, Double longitude, String logradouro) {
+		super();
+		this.id = id;
+		this.uuid = uuid;
+		this.cpf = cpf;
+		this.celular = celular;
+		this.email = email;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.logradouro = logradouro;
+		this.latitude = latitude;
+		this.longitude = longitude;
+	}
+	
+	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,     
+			Double latitude, Double longitude, String logradouro, String cnpj) {
+		super();
+		this.id = id;
+		this.uuid = uuid;
+		this.cpf = cpf;
+		this.celular = celular;
+		this.email = email;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.logradouro = logradouro;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.cnpj = cnpj;
+	}
+	
+	
+	public User(Long id, String nome) {
+		super();
+		this.id = id;
+		this.nome = nome;
+	}
+	
+	
+
+	public User(Long id) {
+		super();
+		this.id = id;
+	}
+
+
+
+
+	public Integer getTipoEstabelecimento() {
+		return tipoEstabelecimento;
+	}
+
+
+
+
+	public void setTipoEstabelecimento(Integer tipoEstabelecimento) {
+		this.tipoEstabelecimento = tipoEstabelecimento;
+	}
+
+
+
+
+	
+	
+	
+	/*
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id_user")
@@ -677,6 +1673,7 @@ public class User {
 		this.comissao = comissao;
 	}
 	
+	*/
 	
 	
 }

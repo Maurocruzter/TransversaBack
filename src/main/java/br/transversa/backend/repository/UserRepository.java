@@ -30,31 +30,40 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	//Page<Users> findCustomQuery(Pageable pageable);
 	
 	//@Query(value = "SELECT * FROM users WHERE email = ?1", nativeQuery = true)
-	@Query(value = "SELECT * FROM users INNER JOIN user_has_roles on users.id = user_has_roles.users_id WHERE users.email = ?1",  nativeQuery = true)
+	@Query(value = "SELECT * FROM users INNER JOIN user_has_roles on users.id = user_has_roles.users_id "
+			+ "WHERE users.email = ?1",  nativeQuery = true)
 	User findByEmailAddress(String emailAddress);
 	
 	
-	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpfCnpj, u.email, u.celular, u.uuid, u.latitude, u.longitude, u.endereco) from User u")
+	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, u.latitude, u.longitude, "
+			+ "u.logradouro) from User u")
     Page<User> findUserAll(Pageable pageable);
 	
-	@Query(value="SELECT new User(u.id, u.nome, u.sobrenome, u.cpfCnpj, u.email, u.celular, u.uuid, u.latitude, u.longitude, u.endereco) from User u  "
+	@Query(value="SELECT new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, u.latitude, u.longitude, "
+			+ "u.logradouro) from User u  "
 			+ "WHERE u.nome LIKE CONCAT('%',:nome,'%')")
 	Page<User> findUserByNome(@Param("nome") String nome, Pageable pageable);
 
-	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpfCnpj, u.email, u.celular, u.uuid, ROUND(u.latitude,7), ROUND(u.longitude,7), u.endereco) from User u ")
+	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, "
+			+ "ROUND(u.latitude,7), ROUND(u.longitude,7), u.logradouro) from User u ")
 	List<User> findAllUsers();
 	
 	
-	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpfCnpj, u.email, u.celular, u.uuid, u.latitude, u.longitude, u.endereco) from User u WHERE u.user2.id = :id")
+	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
+			+ "u.uuid, u.latitude, u.longitude, u.logradouro, u.cnpj) from User u WHERE u.user2.id = :id")
 	List<User> listAllClientesDoUser(Long id);
 	
 	@Query("select new User(u.id) from User u WHERE u.id = :idCliente AND u.user2.id = :idVendedor")
 	Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente);
 	
-	@Query("select new User(u.cpfCnpj) from User u WHERE u.email = :email")
+	@Query("select new User(u.cpf) from User u WHERE u.email = :email")
 	User findUserCpfCnpjByEmail(String email);
 	
 	@Modifying
 	@Query("UPDATE User u set u.senha = :senha where u.id = :id")
 	void ChangePassword(String senha, Long id);
+
+	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
+			+ "u.uuid, u.latitude, u.longitude, u.logradouro) from User u WHERE u.user2.id = :idVendedor")
+	Page<User> findClientesVendedorByPage(Pageable pageable, long idVendedor);
 }

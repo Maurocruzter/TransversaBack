@@ -83,7 +83,7 @@ public class AuthController {
                         loginRequest.getSenha()
                 )
         );
-        
+
 //        System.out.println(expiresIn);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -92,7 +92,7 @@ public class AuthController {
         User user = userService.findCPFCnpJByEmail(authentication.getName());
 //        
 //        System.out.println("This is the new Version ");
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, authentication.getAuthorities(), expiresIn, authentication.getName(), user.getCpfCnpj()));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, authentication.getAuthorities(), expiresIn, authentication.getName(), user.getCpf()));
     }
 
 //    @RequestMapping(value = "/signup", method = RequestMethod.POST, consumes = "application/json")

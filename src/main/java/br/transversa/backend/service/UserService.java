@@ -117,5 +117,13 @@ public class UserService {
 		userRepository.ChangePassword(senha, id);
 		
 	}
+
+
+
+	public Page<User> findClientesVendedorByPage(int pageNumber, long idVendedor) {
+		
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return userRepository.findClientesVendedorByPage(pageable, idVendedor);
+	}
     
 }

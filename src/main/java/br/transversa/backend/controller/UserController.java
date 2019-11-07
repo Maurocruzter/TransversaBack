@@ -2,9 +2,13 @@ package br.transversa.backend.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import javax.persistence.Column;
+import javax.persistence.Lob;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -82,26 +86,49 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/user/add", method = RequestMethod.POST)
-	ResponseEntity<?> registrarProduto(@RequestParam(name="file", required=false) MultipartFile file, 
+	ResponseEntity<?> registrarProduto(
+			@RequestParam(name="fotoLocal", required=false) MultipartFile fotoLocal, 
+			@RequestParam(name="fotoDocumento", required=false) MultipartFile fotoDocumento,
+			
+			@RequestParam(name="cpf", required=true) String cpf, 
+			@RequestParam(name="celular", required=false) String celular, 
+			@RequestParam("email") String email,
+			@RequestParam(name="fixo", required=false) String fixo, 
 			@RequestParam("nome") String nome, 
 			@RequestParam("sobrenome") String sobrenome,
-			@RequestParam(name="comissao", required=false) String comissao,
-			@RequestParam("email") String email,
-			@RequestParam("cpf_cnpj") String cpfCnpj,
+			@RequestParam("senha") String senha,
+			@RequestParam("whatsapp") String whatsapp,
+			
+			@RequestParam(name="bairro", required=false) String bairro, 
+			@RequestParam(name="casa", required=false) String casa, 
+			
+			@RequestParam(name="cep", required=false) String cep, 
+			@RequestParam(name="cidade", required=false) String cidade,
+			@RequestParam(name="cnpj", required=false) String cnpj, 
+			
+			
+			
 			@RequestParam(name="latitude", required=false) Double latitude,
 			@RequestParam(name="longitude", required=false) Double longitude,
+			@RequestParam(name="logradouro", required=false) String logradouro,
+			
+			@RequestParam(name="observacao", required=false) String observacao,
+			@RequestParam(name="pontoReferencia1", required=false) String pontoReferencia1,
+			@RequestParam(name="pontoReferencia2", required=false) String pontoReferencia2,
+			@RequestParam(name="inscricaoEstadual", required=false) String inscricaoEstadual,
 			@RequestParam("roles") String roles,
-			@RequestParam("senha") String senha,
-			@RequestParam("celular") String celular,
-			@RequestParam("endereco") String endereco,
-			@RequestParam(name = "assignedTo", required=false) Long assignedTo) throws IOException{
+			@RequestParam(name="tipoEstabelecimento", required=false) String tipoEstabelecimento,
+			
+			@RequestParam(name="comissao", required=false) String comissao,
+			
+			@RequestParam(name = "assignedTo", required=false) Long assignedTo
+			) throws IOException{
 
 		if(userService.existsByEmail(email)) {
             return new ResponseEntity(new ApiResponse(false, "Email Address already in use!"),
                     HttpStatus.BAD_REQUEST);
         }
-		
-		
+
 		
 		List<UserHasRole> userHasRoles = new ArrayList<>();
 
@@ -165,9 +192,11 @@ public class UserController {
 		user.setNome(nome);
 		user.setSobrenome(sobrenome);
 		user.setEmail(email);
+		user.setCpf(cpf);
 		user.setCelular(celular);
-		user.setCpfCnpj(cpfCnpj);
-		user.setCelular(celular);
+		user.setWhatsapp(whatsapp);
+		user.setFixo(fixo);
+		user.setAtivo((byte) 1);
 		
 		
         User loggedUser = new User();
@@ -175,11 +204,26 @@ public class UserController {
 		if(isCadastrarCliente) {
 			user.setLatitude(latitude);
 			user.setLongitude(longitude);
-			user.setEndereco(endereco);
+			user.setLogradouro(logradouro);
 			UUID uuid = UUID.randomUUID();
 			user.setUuid(uuid.toString());
-			user.setData(file.getBytes());
-			user.setFileType(file.getContentType());
+			user.setFotoDocumento(fotoDocumento.getBytes());
+			user.setFotoEstabelecimento(fotoLocal.getBytes());
+			user.setFileType(fotoDocumento.getContentType());
+			user.setBairro(bairro);
+			
+			user.setCep(cep);
+			
+			user.setCidade(cidade);
+			user.setCnpj(cnpj);
+			user.setInscricaoEstadual(inscricaoEstadual);
+			user.setObservacao(observacao);
+			
+			user.setPontoReferencia1(pontoReferencia1);
+			user.setPontoReferencia2(pontoReferencia2);
+			
+			user.setTipoEstabelecimento(AppConstants.ROLES.indexOf(tipoEstabelecimento));
+			
 			
 			//Placing assignedUser
 			if(isVendedor) {
@@ -201,9 +245,9 @@ public class UserController {
 		
         
         //Placing createdBy
-        user.setUser(loggedUser);
+        user.setUser1(loggedUser);
 //        user.setSenha(user.getCpfCnpj());
-        user.setSenha(passwordEncoder.encode(user.getCpfCnpj()));
+        user.setSenha(passwordEncoder.encode(user.getCpf()));
 
         User result = userService.save(user);
         
@@ -239,6 +283,14 @@ public class UserController {
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
 
 		return userService.findAllUserByPage(pageNumber);
+	}
+	
+	@GetMapping(path = "/listClientesVendedor/page/{pageNumber}")
+	Page<User> listClientesVendedorByPage(
+		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		return userService.findClientesVendedorByPage(pageNumber, Long.parseLong(auth.getName()));
 	}
 	
 	@GetMapping(path = "/listUsersByRole/{role}")
