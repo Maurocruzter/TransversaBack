@@ -27,6 +27,8 @@ public class NewPromocoesRequest {
 	private int compraMinima;
 	
 	private BigDecimal desconto;
+	
+	private int quantidade;
 
 	public Long getIdProduto() {
 		return idProduto;
@@ -66,6 +68,14 @@ public class NewPromocoesRequest {
 
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
+	}
+
+	public int getQuantidade() {
+		return quantidade;
+	}
+
+	public void setQuantidade(int quantidade) {
+		this.quantidade = quantidade;
 	}
 	
 	

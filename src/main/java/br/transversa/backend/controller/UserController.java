@@ -100,11 +100,11 @@ public class UserController {
 			@RequestParam("whatsapp") String whatsapp,
 			
 			@RequestParam(name="bairro", required=false) String bairro, 
-			@RequestParam(name="casa", required=false) String casa, 
 			
 			@RequestParam(name="cep", required=false) String cep, 
 			@RequestParam(name="cidade", required=false) String cidade,
 			@RequestParam(name="cnpj", required=false) String cnpj, 
+			@RequestParam(name="casaNumero", required=false) String casaNumero, 
 			
 			
 			
@@ -130,6 +130,7 @@ public class UserController {
         }
 
 		
+		
 		List<UserHasRole> userHasRoles = new ArrayList<>();
 
 		Long id = new Long(1+1);
@@ -145,7 +146,7 @@ public class UserController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 
-		if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+		if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) || auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"))) {
 			
 			
 			for(int i = 0; i< str.length ; i++) {
@@ -193,15 +194,28 @@ public class UserController {
 		user.setSobrenome(sobrenome);
 		user.setEmail(email);
 		user.setCpf(cpf);
-		user.setCelular(celular);
+		if(celular == null || celular.isEmpty()) {
+			user.setCelular(null);
+		} else {
+			user.setCelular(celular);
+		}
+		
+		if(fixo == null || fixo.isEmpty()) {
+			user.setFixo(null);
+		} else {
+			user.setFixo(fixo);
+		}
+		
 		user.setWhatsapp(whatsapp);
-		user.setFixo(fixo);
+		
 		user.setAtivo((byte) 1);
 		
 		
         User loggedUser = new User();
         loggedUser.setId(Long.parseLong(auth.getName()));
 		if(isCadastrarCliente) {
+			
+			System.out.println(casaNumero);
 			user.setLatitude(latitude);
 			user.setLongitude(longitude);
 			user.setLogradouro(logradouro);
@@ -211,6 +225,7 @@ public class UserController {
 			user.setFotoEstabelecimento(fotoLocal.getBytes());
 			user.setFileType(fotoDocumento.getContentType());
 			user.setBairro(bairro);
+			user.setCasaNumero(casaNumero);
 			
 			user.setCep(cep);
 			
@@ -220,9 +235,15 @@ public class UserController {
 			user.setObservacao(observacao);
 			
 			user.setPontoReferencia1(pontoReferencia1);
-			user.setPontoReferencia2(pontoReferencia2);
+			if(pontoReferencia2 == null || pontoReferencia2.isEmpty()) {
+				
+				
+				user.setPontoReferencia2(null);
+			} else {
+				user.setPontoReferencia2(pontoReferencia2);
+			}
 			
-			user.setTipoEstabelecimento(AppConstants.ROLES.indexOf(tipoEstabelecimento));
+			user.setTipoEstabelecimento(AppConstants.TIPO_ESTABELECIMENTOS.indexOf(tipoEstabelecimento));
 			
 			
 			//Placing assignedUser
@@ -231,8 +252,6 @@ public class UserController {
 			} else {
 				User userAux = new User();
 				userAux.setId(assignedTo);
-				System.out.println(assignedTo);
-				System.out.println(userAux.getId());
 				user.setUser2(userAux);
 			}
 			

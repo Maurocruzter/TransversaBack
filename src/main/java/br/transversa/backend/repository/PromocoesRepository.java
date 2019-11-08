@@ -16,18 +16,18 @@ import br.transversa.backend.model.Promocoes;
 public interface PromocoesRepository extends JpaRepository<Promocoes, Long> {
 
 	
-	@Query(value = "SELECT new Promocoes(max(p.id), max(p.dataInicio), max(p.dataFim), max(p.compraMinima), max(p.desconto), max(p.produto.id), "
-			+ "max(p.produto.preco), max(p.produto.nome) , max(p.produto.uuid) )  FROM Promocoes p "
+	@Query(value = "SELECT new Promocoes(max(p.id), max(p.dataInicio), max(p.dataFim), max(p.compraMinima), max(p.desconto), max(p.stock.produto.id), "
+			+ "max(p.stock.produto.preco), max(p.stock.produto.nome) , max(p.stock.produto.uuid) )  FROM Promocoes p "
 			+ "WHERE p.dataInicio <= :dataAtual AND p.dataFim >= :dataAtual "
-			+ "GROUP BY p.produto.id")
+			+ "GROUP BY p.stock.produto.id")
 	Page<Promocoes>findPromocoesByPage(Pageable pageable, Date dataAtual);
 	
-	@Query(value = "SELECT new Promocoes(p.id, p.dataInicio, p.dataFim, p.compraMinima, p.desconto, p.produto.id, "
-			+ "p.produto.preco, p.produto.nome , p.produto.uuid )  FROM Promocoes p "
-			+ "WHERE p.produto.id = :produtoId ORDER BY p.id DESC")
+	@Query(value = "SELECT new Promocoes(p.id, p.dataInicio, p.dataFim, p.compraMinima, p.desconto, p.stock.produto.id, "
+			+ "p.stock.produto.preco, p.stock.produto.nome , p.stock.produto.uuid )  FROM Promocoes p "
+			+ "WHERE p.stock.produto.id = :produtoId ORDER BY p.id DESC")
 	Page<Promocoes> findPromocoesByProdutoId(Pageable pageable, Long produtoId);
 	
-	@Query(value = "SELECT new Promocoes(p.id, p.dataInicio, p.dataFim, p.compraMinima, p.desconto, p.produto.id)  FROM Promocoes p WHERE p.produto.id = :idProduto "
+	@Query(value = "SELECT new Promocoes(p.id, p.dataInicio, p.dataFim, p.compraMinima, p.desconto, p.stock.produto.id)  FROM Promocoes p WHERE p.stock.produto.id = :idProduto "
 			+ "AND p.dataInicio<= :dataInicio AND p.dataFim >= :dataFim")
 	Optional<Promocoes> findIfPromocaoNoOverlap(Long idProduto, Date dataInicio, Date dataFim);
 	

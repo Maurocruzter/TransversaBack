@@ -2,7 +2,9 @@ package br.transversa.backend.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,9 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,40 +37,32 @@ public class Promocoes implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id_promocoes")
-    private Long id;
-
-	@Column(name="data_inicio")
-	private Date dataInicio;
-	
-	@Column(name="data_fim")
-	private Date dataFim;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="data_adicionado")
-	private Date dataAdicionado;
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id_promocoes", unique=true, nullable=false)
+	private Long id;
 
 	@Column(name="compra_minima")
 	private int compraMinima;
-	
+
+	@Column(name="data_adicionado", nullable=false)
+	private Timestamp dataAdicionado;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="data_fim")
+	private Date dataFim;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="data_inicio")
+	private Date dataInicio;
+
+	@Column(precision=10, scale=2)
 	private BigDecimal desconto;
-	
-	//bi-directional many-to-one association to User
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="produtos_id")
-	private Produto produto;
-	
-	//bi-directional many-to-one association to User
-	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="users_id")
-	private User user;
 	
 	@Transient
 	private Long produtoId;
 	
 	@Transient
-	private BigDecimal preco;
+	private BigDecimal preco; 
 	
 	@Transient
 	private String nome;
@@ -76,98 +70,104 @@ public class Promocoes implements Serializable {
 	@Transient
 	private String uuid;
 
+	//bi-directional many-to-one association to Stock
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="stock_id", nullable=false)
+	private Stock stock;
+
+	//bi-directional many-to-one association to User
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="users_id", nullable=false)
+	private User user;
+
+	//bi-directional many-to-one association to StockPromocao
+	@OneToMany(mappedBy="promocoe")
+	private List<StockPromocao> stockPromocaos;
+
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
-	public Date getDataInicio() {
-		return dataInicio;
-	}
-
-	public void setDataInicio(Date dataInicio) {
-		this.dataInicio = dataInicio;
-	}
-
-	public Date getDataFim() {
-		return dataFim;
-	}
-
-	public void setDataFim(Date dataFim) {
-		this.dataFim = dataFim;
-	}
-
-	public Date getDataAdicionado() {
-		return dataAdicionado;
-	}
-
-	public void setDataAdicionado(Date dataAdicionado) {
-		this.dataAdicionado = dataAdicionado;
-	}
-
 	public int getCompraMinima() {
-		return compraMinima;
+		return this.compraMinima;
 	}
 
 	public void setCompraMinima(int compraMinima) {
 		this.compraMinima = compraMinima;
 	}
 
+	public Timestamp getDataAdicionado() {
+		return this.dataAdicionado;
+	}
+
+	public void setDataAdicionado(Timestamp dataAdicionado) {
+		this.dataAdicionado = dataAdicionado;
+	}
+
+	public Date getDataFim() {
+		return this.dataFim;
+	}
+
+	public void setDataFim(Date dataFim) {
+		this.dataFim = dataFim;
+	}
+
+	public Date getDataInicio() {
+		return this.dataInicio;
+	}
+
+	public void setDataInicio(Date dataInicio) {
+		this.dataInicio = dataInicio;
+	}
+
 	public BigDecimal getDesconto() {
-		return desconto;
+		return this.desconto;
 	}
 
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
 
-	public Produto getProduto() {
-		return produto;
+	public Stock getStock() {
+		return this.stock;
 	}
 
-	public void setProduto(Produto produto) {
-		this.produto = produto;
+	public void setStock(Stock stock) {
+		this.stock = stock;
 	}
 
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public void setUser(User user) {
 		this.user = user;
 	}
 
-	
-	
-	public Long getProdutoId() {
-		return produtoId;
+	public List<StockPromocao> getStockPromocaos() {
+		return this.stockPromocaos;
 	}
 
-	public void setProdutoId(Long produtoId) {
-		this.produtoId = produtoId;
+	public void setStockPromocaos(List<StockPromocao> stockPromocaos) {
+		this.stockPromocaos = stockPromocaos;
 	}
 
-	
-	public BigDecimal getPreco() {
-		return preco;
+	public StockPromocao addStockPromocao(StockPromocao stockPromocao) {
+		getStockPromocaos().add(stockPromocao);
+		stockPromocao.setPromocoe(this);
+
+		return stockPromocao;
 	}
 
-	public void setPreco(BigDecimal preco) {
-		this.preco = preco;
-	}
-	
-	
+	public StockPromocao removeStockPromocao(StockPromocao stockPromocao) {
+		getStockPromocaos().remove(stockPromocao);
+		stockPromocao.setPromocoe(null);
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
+		return stockPromocao;
 	}
 
 	public Promocoes(Long id, Date dataInicio, Date dataFim, 
@@ -212,6 +212,30 @@ public class Promocoes implements Serializable {
 		this.id = id;
 	}
 
+	public Long getProdutoId() {
+		return produtoId;
+	}
+
+	public void setProdutoId(Long produtoId) {
+		this.produtoId = produtoId;
+	}
+
+	public BigDecimal getPreco() {
+		return preco;
+	}
+
+	public void setPreco(BigDecimal preco) {
+		this.preco = preco;
+	}
+
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -219,6 +243,8 @@ public class Promocoes implements Serializable {
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
 	}
+
+	
 
 	
 	

@@ -28,6 +28,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
+
+
 /**
  * The persistent class for the produtos database table.
  * 
@@ -40,37 +42,54 @@ public class Produto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id_produto")
-    private Long id;
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="id_produto", unique=true, nullable=false)
+	private Long id;
 
 	@Lob
 	private byte[] data;
 
-	@Column(name="data_adicionado")
+	@Column(name="data_adicionado", nullable=false)
 	private Timestamp dataAdicionado;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="data_alterado")
 	private Date dataAlterado;
 
+	@Column(length=45)
 	private String descricao;
-	
-	private String dimensoes;
-	
-	private String peso;
 
-	@Column(name="file_type")
+	@Column(length=20)
+	private String dimensoes;
+
+	@Column(name="file_type", nullable=false, length=15)
 	private String fileType;
 
+	@Column(nullable=false, length=45)
 	private String nome;
 
+	@Column(length=45)
+	private String peso;
+
+	@Column(nullable=false, precision=10, scale=2)
 	private BigDecimal preco;
 
+	@Column(nullable=false, length=45)
+	private String uuid;
+	
+	@Transient
+	private int quantidade;
+	
+	@Transient
+	private Long idCarrinho;
 
 	//bi-directional many-to-one association to CarrinhosHasProduto
 	@OneToMany(mappedBy="produto")
 	private List<CarrinhosHasProduto> carrinhosHasProdutos;
+
+	//bi-directional many-to-one association to EntradaProdutoStock
+	@OneToMany(mappedBy="produto")
+	private List<EntradaProdutoStock> entradaProdutoStocks;
 
 	//bi-directional many-to-one association to PedidosHasProduto
 	@OneToMany(mappedBy="produto")
@@ -82,7 +101,7 @@ public class Produto implements Serializable {
 
 	//bi-directional many-to-one association to User
 	@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="users_id")
+	@JoinColumn(name="users_id", nullable=false)
 	private User user;
 
 	//bi-directional many-to-one association to ProdutosHasTipoProduto
@@ -93,130 +112,53 @@ public class Produto implements Serializable {
 	@OneToMany(mappedBy="produto")
 	private List<ProdutosHasTipoProdutosComplementar> produtosHasTipoProdutosComplementars;
 
+	//bi-directional many-to-one association to SaidaProdutoStock
+	@OneToMany(mappedBy="produto")
+	private List<SaidaProdutoStock> saidaProdutoStocks;
+
+
+	//bi-directional many-to-one association to Stock
+	@OneToMany(mappedBy="produto")
+	private List<Stock> stocks;
+
 	//bi-directional many-to-one association to VendasHasProduto
 	@OneToMany(mappedBy="produto")
 	private List<VendasHasProduto> vendasHasProdutos;
-	
-	@GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String uuid;
-	
-	@Transient
-	private int quantidade;
-	
-	@Transient
-	private Long idCarrinho;
-
-	public Produto() {
-	}
-	
-	
-
-	public Produto(Long id, String nome, BigDecimal preco, String uuid) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.preco = preco;
-		this.uuid = uuid;
-	}
-	
-	
-	public Produto(byte[] data) {
-		super();
-		this.data = data;
-	}
 
 	
-
 	
-
-	public Produto(BigDecimal preco) {
-		super();
-		this.preco = preco;
-	}
-
-
-
-	public Produto(Long id) {
-		super();
-		this.id = id;
-		
-		System.out.println("id Porra caralho!!!" +id);
-	}
-
-
-
-	public Produto(Long id, String descricao, String nome, BigDecimal preco, String uuid) {
-		super();
-		this.id = id;
-		this.descricao = descricao;
-		this.nome = nome;
-		this.preco = preco;
-		this.uuid = uuid;
-	}
-
-
-
-	public Produto(String nome, byte[] data, String fileType) {
-		super();
-		this.nome = nome;
-		this.data = data;
-		this.fileType = fileType;
-	}
-	
-	
-
-
-
-	public Produto(Long id, String nome, BigDecimal preco,
-			String uuid,
-			 int quantidade) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.preco = preco;
-		this.uuid = uuid;
-		this.quantidade = quantidade;
-	}
-	
-	public Produto(Long id, String nome, BigDecimal preco,
-			String uuid,
-			 int quantidade,
-			 Long idCarrinho) {
-		super();
-		this.id = id;
-		this.nome = nome;
-		this.preco = preco;
-		this.uuid = uuid;
-		this.quantidade = quantidade;
-		this.idCarrinho = idCarrinho;
-	}
-
-
 
 	public int getQuantidade() {
 		return quantidade;
 	}
 
-
-
 	public void setQuantidade(int quantidade) {
 		this.quantidade = quantidade;
 	}
 
-
-
-	public Long getId() {
-		return id;
+	public Long getIdCarrinho() {
+		return idCarrinho;
 	}
 
+	public void setIdCarrinho(Long idCarrinho) {
+		this.idCarrinho = idCarrinho;
+	}
 
+	public Long getId() {
+		return this.id;
+	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	public byte[] getData() {
+		return this.data;
+	}
 
+	public void setData(byte[] data) {
+		this.data = data;
+	}
 
 	public Timestamp getDataAdicionado() {
 		return this.dataAdicionado;
@@ -227,16 +169,12 @@ public class Produto implements Serializable {
 	}
 
 	public Date getDataAlterado() {
-		return dataAlterado;
+		return this.dataAlterado;
 	}
-
-
 
 	public void setDataAlterado(Date dataAlterado) {
 		this.dataAlterado = dataAlterado;
 	}
-
-
 
 	public String getDescricao() {
 		return this.descricao;
@@ -244,6 +182,22 @@ public class Produto implements Serializable {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	public String getDimensoes() {
+		return this.dimensoes;
+	}
+
+	public void setDimensoes(String dimensoes) {
+		this.dimensoes = dimensoes;
+	}
+
+	public String getFileType() {
+		return this.fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 
 	public String getNome() {
@@ -254,12 +208,28 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 
+	public String getPeso() {
+		return this.peso;
+	}
+
+	public void setPeso(String peso) {
+		this.peso = peso;
+	}
+
 	public BigDecimal getPreco() {
 		return this.preco;
 	}
 
 	public void setPreco(BigDecimal preco) {
 		this.preco = preco;
+	}
+
+	public String getUuid() {
+		return this.uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public List<CarrinhosHasProduto> getCarrinhosHasProdutos() {
@@ -282,6 +252,51 @@ public class Produto implements Serializable {
 		carrinhosHasProduto.setProduto(null);
 
 		return carrinhosHasProduto;
+	}
+
+	public List<EntradaProdutoStock> getEntradaProdutoStocks() {
+		return this.entradaProdutoStocks;
+	}
+
+	public void setEntradaProdutoStocks(List<EntradaProdutoStock> entradaProdutoStocks) {
+		this.entradaProdutoStocks = entradaProdutoStocks;
+	}
+
+	public EntradaProdutoStock addEntradaProdutoStock(EntradaProdutoStock entradaProdutoStock) {
+		getEntradaProdutoStocks().add(entradaProdutoStock);
+		entradaProdutoStock.setProduto(this);
+
+		return entradaProdutoStock;
+	}
+
+	public EntradaProdutoStock removeEntradaProdutoStock(EntradaProdutoStock entradaProdutoStock) {
+		getEntradaProdutoStocks().remove(entradaProdutoStock);
+		entradaProdutoStock.setProduto(null);
+
+		return entradaProdutoStock;
+	}
+
+
+	public List<PedidosHasProduto> getPedidosHasProdutos() {
+		return this.pedidosHasProdutos;
+	}
+
+	public void setPedidosHasProdutos(List<PedidosHasProduto> pedidosHasProdutos) {
+		this.pedidosHasProdutos = pedidosHasProdutos;
+	}
+
+	public PedidosHasProduto addPedidosHasProduto(PedidosHasProduto pedidosHasProduto) {
+		getPedidosHasProdutos().add(pedidosHasProduto);
+		pedidosHasProduto.setProduto(this);
+
+		return pedidosHasProduto;
+	}
+
+	public PedidosHasProduto removePedidosHasProduto(PedidosHasProduto pedidosHasProduto) {
+		getPedidosHasProdutos().remove(pedidosHasProduto);
+		pedidosHasProduto.setProduto(null);
+
+		return pedidosHasProduto;
 	}
 
 	public List<ProdutoHasTipoProdutosSubstituto> getProdutoHasTipoProdutosSubstitutos() {
@@ -358,6 +373,51 @@ public class Produto implements Serializable {
 		return produtosHasTipoProdutosComplementar;
 	}
 
+	public List<SaidaProdutoStock> getSaidaProdutoStocks() {
+		return this.saidaProdutoStocks;
+	}
+
+	public void setSaidaProdutoStocks(List<SaidaProdutoStock> saidaProdutoStocks) {
+		this.saidaProdutoStocks = saidaProdutoStocks;
+	}
+
+	public SaidaProdutoStock addSaidaProdutoStock(SaidaProdutoStock saidaProdutoStock) {
+		getSaidaProdutoStocks().add(saidaProdutoStock);
+		saidaProdutoStock.setProduto(this);
+
+		return saidaProdutoStock;
+	}
+
+	public SaidaProdutoStock removeSaidaProdutoStock(SaidaProdutoStock saidaProdutoStock) {
+		getSaidaProdutoStocks().remove(saidaProdutoStock);
+		saidaProdutoStock.setProduto(null);
+
+		return saidaProdutoStock;
+	}
+
+
+	public List<Stock> getStocks() {
+		return this.stocks;
+	}
+
+	public void setStocks(List<Stock> stocks) {
+		this.stocks = stocks;
+	}
+
+	public Stock addStock(Stock stock) {
+		getStocks().add(stock);
+		stock.setProduto(this);
+
+		return stock;
+	}
+
+	public Stock removeStock(Stock stock) {
+		getStocks().remove(stock);
+		stock.setProduto(null);
+
+		return stock;
+	}
+
 	public List<VendasHasProduto> getVendasHasProdutos() {
 		return this.vendasHasProdutos;
 	}
@@ -379,80 +439,92 @@ public class Produto implements Serializable {
 
 		return vendasHasProduto;
 	}
+	
+	
+	
 
-	public byte[] getData() {
-		return data;
+	public Produto() {
 	}
+	
+	
 
-	public void setData(byte[] data) {
+	public Produto(Long id, String nome, BigDecimal preco, String uuid) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+	}
+	
+	
+	public Produto(byte[] data) {
+		super();
 		this.data = data;
 	}
 
-	public String getFileType() {
-		return fileType;
+	
+
+	
+
+	public Produto(BigDecimal preco) {
+		super();
+		this.preco = preco;
 	}
 
-	public void setFileType(String fileType) {
-		this.fileType = fileType;
+
+
+	public Produto(Long id) {
+		super();
+		this.id = id;
 	}
 
-	public String getUuid() {
-		return uuid;
-	}
 
-	public void setUuid(String uuid) {
+
+	public Produto(Long id, String descricao, String nome, BigDecimal preco, String uuid) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.nome = nome;
+		this.preco = preco;
 		this.uuid = uuid;
 	}
 
 
 
-	public Long getIdCarrinho() {
-		return idCarrinho;
+	public Produto(String nome, byte[] data, String fileType) {
+		super();
+		this.nome = nome;
+		this.data = data;
+		this.fileType = fileType;
 	}
+	
+	
 
 
 
-	public void setIdCarrinho(Long idCarrinho) {
+	public Produto(Long id, String nome, BigDecimal preco,
+			String uuid,
+			 int quantidade) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+		this.quantidade = quantidade;
+	}
+	
+	public Produto(Long id, String nome, BigDecimal preco,
+			String uuid,
+			 int quantidade,
+			 Long idCarrinho) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+		this.quantidade = quantidade;
 		this.idCarrinho = idCarrinho;
 	}
-
-
-
-	public List<PedidosHasProduto> getPedidosHasProdutos() {
-		return pedidosHasProdutos;
-	}
-
-
-
-	public void setPedidosHasProdutos(List<PedidosHasProduto> pedidosHasProdutos) {
-		this.pedidosHasProdutos = pedidosHasProdutos;
-	}
-
-
-
-	public String getDimensoes() {
-		return dimensoes;
-	}
-
-
-
-	public void setDimensoes(String dimensoes) {
-		this.dimensoes = dimensoes;
-	}
-
-
-
-	public String getPeso() {
-		return peso;
-	}
-
-
-
-	public void setPeso(String peso) {
-		this.peso = peso;
-	}
-	
-	
 	
 
 }

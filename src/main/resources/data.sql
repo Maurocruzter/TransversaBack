@@ -26,7 +26,7 @@ INSERT IGNORE INTO user_has_roles(id_user_role,users_id,roles_id) VALUES(3,3,2);
 
 
 
-INSERT IGNORE INTO users(id_user,email,nome_fantasia,senha,razao_social,celular, file_type, uuid, cpf, latitude, longitude, assigned_to_id, cnpj) VALUES(4,'cliente@cliente.com','cliente','$2a$10$UFFHLx/zwVhknEr2AOPYGueOIHTMV1waOhaFzYV0ph1hZpNxeiDhu','cliente','77777','jpeg','4','47146947076', -22.256317,-45.696338,2, '96316432000185');
+INSERT IGNORE INTO users(id_user,email,nome_fantasia,senha,razao_social,celular, file_type, uuid, cpf, latitude, longitude, assigned_to_id, cnpj, tipo_estabelecimento, ponto_referencia1, cidade, bairro, logradouro, casa_numero) VALUES(4,'cliente@cliente.com','cliente','$2a$10$UFFHLx/zwVhknEr2AOPYGueOIHTMV1waOhaFzYV0ph1hZpNxeiDhu','cliente','77777','jpeg','4','47146947076', -22.256317,-45.696338,2, '96316432000185', 4, 'choppirado', 'Santa Rita do Sapucaí', 'Santana', 'Avenida Filomena Vilela', '126');
 
 INSERT IGNORE INTO user_has_roles(id_user_role,users_id,roles_id) VALUES(4,4,3);
 

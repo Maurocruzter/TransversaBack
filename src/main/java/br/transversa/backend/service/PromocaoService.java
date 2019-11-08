@@ -31,13 +31,15 @@ public class PromocaoService {
 	}
 	
 	public Promocoes findPromocoesByProdutoId(int pageNumber ,Long produtoId) {
+		
+		System.out.println("Esteve aqyu debtri");
 		Pageable pageable = PageRequest.of(pageNumber, 1);
 		Page<Promocoes> aux = promocoesRepository.findPromocoesByProdutoId(pageable, produtoId);
+		
 		if(aux.isEmpty()) {
 			return null;
 		}
 		
-		System.out.println(aux.getSize());
 		return aux.getContent().get(0);
 	}
 	

@@ -2,6 +2,7 @@ package br.transversa.backend.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,11 +34,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Promocoes;
+import br.transversa.backend.model.Stock;
+import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.model.User;
 import br.transversa.backend.payload.ApiResponse;
 import br.transversa.backend.payload.NewPromocoesRequest;
 import br.transversa.backend.service.ProdutoService;
 import br.transversa.backend.service.PromocaoService;
+import br.transversa.backend.service.StockPromocaoService;
+import br.transversa.backend.service.StockService;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -49,15 +54,21 @@ public class ProdutoController {
 	@Autowired
 	PromocaoService promocoesService;
 	
+	@Autowired
+	StockService stockService;
+	
+	@Autowired
+	StockPromocaoService stockPromocaoService;
+	
 	
 	@PostMapping(path = "/produto/add")
 	ResponseEntity<?> registrarProduto(@RequestParam("file") MultipartFile file, 
 			@RequestParam("nome") String nome, 
 			@RequestParam("descricao") String descricao,
-			@RequestParam("preco") BigDecimal preco) throws IOException{
+			@RequestParam("preco") BigDecimal preco,
+			@RequestParam("stockInicial") String stockInicial) throws IOException{
 		
 		
-//		System.out.println("entra aqui?");
 		Produto produto = new Produto();
 		
 		produto.setNome(nome);
@@ -83,7 +94,7 @@ public class ProdutoController {
 		Promocoes promocaoReal = new Promocoes();
 		
 		promocaoReal.setCompraMinima(0);
-		promocaoReal.setDataAdicionado(new Date());
+		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
 		promocaoReal.setDataFim(myDate);
 		promocaoReal.setDataInicio(myDate);
 		promocaoReal.setDesconto(new BigDecimal(0));
@@ -91,10 +102,25 @@ public class ProdutoController {
 		
 		produtoService.save(produto);
 		
-		promocaoReal.setProduto(produto);
+		Stock stock = new Stock();
+		stock.setProduto(produto);
+		stock.setQuantidade(new Integer(stockInicial));
+		
+		stockService.save(stock);
+		
+		//promocaoReal.setProduto(produto);
         loggedUser.setId(Long.parseLong(auth.getName()));
 		promocaoReal.setUser(loggedUser);
+		
+		promocaoReal.setStock(stock);
 		promocoesService.save(promocaoReal);
+		
+		
+		StockPromocao stockPromocao = new StockPromocao();
+		stockPromocao.setPromocoe(promocaoReal);
+		stockPromocao.setQuantidadeEmPromocao(0);
+		
+		stockPromocaoService.save(stockPromocao);
 		
         return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
                     HttpStatus.CREATED);
@@ -145,13 +171,13 @@ public class ProdutoController {
 		Promocoes promocaoReal = new Promocoes();
 		
 		promocaoReal.setCompraMinima(promocao.getCompraMinima());
-		promocaoReal.setDataAdicionado(new Date());
+		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
 		promocaoReal.setDataFim(promocao.getDataFim());
 		promocaoReal.setDataInicio(promocao.getDataInicio());
 		promocaoReal.setDesconto(promocao.getDesconto());
 		Produto produto = new Produto();
 		produto.setId(promocao.getIdProduto());
-		promocaoReal.setProduto(produto);
+		//promocaoReal.setProduto(produto);
 		User loggedUser = new User();
         loggedUser.setId(Long.parseLong(auth.getName()));
 		promocaoReal.setUser(loggedUser);
@@ -163,7 +189,19 @@ public class ProdutoController {
                     HttpStatus.BAD_REQUEST);
 		}
 		
+		
+		
+		promocaoReal.setStock(
+				stockService.findStockByProdutoId(promocao.getIdProduto()));
 		promocoesService.save(promocaoReal);
+
+		StockPromocao stockPromocao = new StockPromocao();
+		stockPromocao.setPromocoe(promocaoReal);
+		stockPromocao.setQuantidadeEmPromocao(promocao.getQuantidade());
+		
+		stockPromocaoService.save(stockPromocao);
+
+		
 
 		
         return new ResponseEntity(new ApiResponse(true, "Promoção adicionada com sucesso"),
@@ -182,17 +220,26 @@ public class ProdutoController {
 	
 	@GetMapping(path = "/listProdutos/page/{pageNumber}")
 //	Page<Produto> listProdutosByPage(
-	List<Promocoes> listProdutosByPage(
+	List<StockPromocao> listProdutosByPage(
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
-
-		Page<Promocoes> aux = produtoService.findAllProdutoByPageRetrieveOnlyId(pageNumber);
 		
-		List<Promocoes> promocoesList = new ArrayList<>();
+
+//		Page<Promocoes> aux = produtoService.findAllProdutoByPageRetrieveOnlyId(pageNumber);
+		Page<StockPromocao> aux = stockPromocaoService.findAllProdutoByPageRetrieveOnlyId(pageNumber);
+		
+		List<StockPromocao> promocoesList = new ArrayList<>();
+		
+		
 		
 		int tamanho = aux.getContent().size();
 		for(int i = 0; i < tamanho; i++) {
 			
-			promocoesList.add(promocoesService.findPromocoesByProdutoId(pageNumber, aux.getContent().get(i).getId())) ;
+			promocoesList.add(
+					stockPromocaoService.findPromocoesByProdutoId(
+							pageNumber, aux.getContent().get(i).getId())) ;
+			
+			
+//			promocoesList.add(promocoesService.findPromocoesByProdutoId(pageNumber, aux.getContent().get(i).getId())) ;
 			
 		}
 		
@@ -246,10 +293,13 @@ public class ProdutoController {
 //	}
 	
 	@GetMapping(path = "/produto/searchById/{id}")
-	Promocoes searchProdutoById(@PathVariable(name = "id", required = true) Long id) {
+	StockPromocao searchProdutoById(@PathVariable(name = "id", required = true) Long id) {
 		
-		System.out.println("fasfasfsaf");
-		return promocoesService.findPromocoesByProdutoId(0, id);
+//		System.out.println("fasfasfsaf");
+		
+//		StockPromocaoService.find
+		return stockPromocaoService.findPromocoesByProdutoId(0, id);
+//		return promocoesService.findPromocoesByProdutoId(0, id);
 
 	}
 	
