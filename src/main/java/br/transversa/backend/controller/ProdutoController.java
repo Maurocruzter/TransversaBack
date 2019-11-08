@@ -148,6 +148,8 @@ public class ProdutoController {
 	ResponseEntity<?> registrarProduto(@RequestBody NewPromocoesRequest promocao) {
 		
 		
+		System.out.println(promocao.getQuantidade());
+		
 		
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
