@@ -69,8 +69,6 @@ public class PesquisaPrecoController {
 //			@RequestParam("preco") BigDecimal preco
 			) throws IOException{
 		
-		System.out.println("Entrou aqui");
-		System.out.println(nome);
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
 		
@@ -104,7 +102,6 @@ public class PesquisaPrecoController {
 			
 			pesquisaPrecoList.add(pesquisaPreco);
 		}
-		System.out.println("entra aqui?");
 		
 		
 			
@@ -130,7 +127,6 @@ public class PesquisaPrecoController {
 	Page<Pesquisapreco> listProdutosByPage(
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
 
-		System.out.println("11111");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
 //		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
@@ -147,7 +143,6 @@ public class PesquisaPrecoController {
 	@GetMapping(path = "/pesquisaPreco/loadImage/{id}")
 	ResponseEntity<Resource> carregarProdutoImagem(@PathVariable(name = "id", required = false) String uuid) {
 		
-		System.out.println("22222");
 		Pesquisapreco produto = pesquisaPrecoService.findPesquisaPrecoByUuid(uuid);
 		
 		if(produto == null)
@@ -163,9 +158,7 @@ public class PesquisaPrecoController {
 	
 	@GetMapping(path = "/pesquisaPreco/{id}")
 	Pesquisapreco carregarProduto(@PathVariable(name = "id", required = true) Long id) {
-		
-		System.out.println("33333");
-		System.out.println(id);
+
 		return pesquisaPrecoService.findPesquisaPrecoById(id);
 
 	}
@@ -175,10 +168,7 @@ public class PesquisaPrecoController {
 								@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 		
 		
-		System.out.println("4444");
-//		System.out.println("sfasfasfsa "+nome);
 //		return null;
-		//System.out.println(nome);
 		
 		return pesquisaPrecoService.findPesquisaPrecoSearchNome(nome,pageNumber);
 		//return produtoService.findProdutoById(nome);

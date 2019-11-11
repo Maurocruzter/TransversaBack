@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.Date;
 
 
 /**
@@ -35,10 +36,12 @@ public class Pesquisapreco implements Serializable {
 	@Column(name="file_type", nullable=false, length=15)
 	private String fileType;
 
+	@Column(name="razao_social")
 	private String razaoSocial;
 	
 	private String endereco;
 
+	@Column(name="codigo_barras")
 	private BigInteger codigoBarras;
 	
 	private String descricao;
@@ -180,6 +183,32 @@ public class Pesquisapreco implements Serializable {
 		this.codigoBarras = codigoBarras;
 		this.razaoSocial = razaoSocial;
 		this.endereco = endereco;
+		
+	}
+	
+	public Pesquisapreco(Long id, 
+			String nome, 
+			BigDecimal preco, 
+			String uuid, 
+			String marca,
+			String descricao,
+			BigInteger codigoBarras,
+			String razaoSocial,
+			String endereco,
+			Date dataCriado) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+		this.marca = marca;
+		this.descricao = descricao;
+		this.codigoBarras = codigoBarras;
+		this.razaoSocial = razaoSocial;
+		this.endereco = endereco;
+		
+		System.out.println(dataCriado);
+		this.dataCriado = (Timestamp) dataCriado;
 		
 	}
 

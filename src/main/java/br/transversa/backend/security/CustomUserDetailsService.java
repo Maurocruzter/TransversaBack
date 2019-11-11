@@ -39,7 +39,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         
-        //System.out.println(user.get().getUserHasRoles().get(0).getRole().getName());
 
         return UserPrincipal.create(user.get());
     }

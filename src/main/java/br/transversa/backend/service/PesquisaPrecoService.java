@@ -55,7 +55,6 @@ public class PesquisaPrecoService {
 	
 	public Page<Pesquisapreco> findPesquisaPrecoSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
-//		System.out.println(nome);
 		return pesquisaPrecoRepository.findPesquisaPrecoByNome(nome, pageable);
 	}
 

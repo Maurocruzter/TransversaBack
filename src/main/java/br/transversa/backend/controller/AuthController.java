@@ -84,14 +84,12 @@ public class AuthController {
                 )
         );
 
-//        System.out.println(expiresIn);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
         User user = userService.findCPFCnpJByEmail(authentication.getName());
 //        
-//        System.out.println("This is the new Version ");
         return ResponseEntity.ok(new JwtAuthenticationResponse(jwt, authentication.getAuthorities(), expiresIn, authentication.getName(), user.getCpf()));
     }
 

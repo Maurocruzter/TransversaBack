@@ -68,7 +68,6 @@ public class ProdutoService {
 	
 	public Page<Produto> findPesquisaPrecoSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
-//		System.out.println(nome);
 		return produtoRepository.findProdutoByNome(nome, pageable);
 	}
 	

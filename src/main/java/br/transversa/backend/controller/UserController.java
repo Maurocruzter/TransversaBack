@@ -77,7 +77,6 @@ public class UserController {
 //		int setPedidoEntregue(byte isEntregue, Long id);
         loggedUser.setSenha(passwordEncoder.encode(senha));
         
-        System.out.println(loggedUser.getSenha());
 		userService.ChangePassword(loggedUser.getSenha(), loggedUser.getId());
 
         return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
@@ -215,7 +214,6 @@ public class UserController {
         loggedUser.setId(Long.parseLong(auth.getName()));
 		if(isCadastrarCliente) {
 			
-			System.out.println(casaNumero);
 			user.setLatitude(latitude);
 			user.setLongitude(longitude);
 			user.setLogradouro(logradouro);
@@ -288,9 +286,7 @@ public class UserController {
 	Page<User> searchProduto(@PathVariable(name = "nome", required = true) String nome,
 								@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 		
-//		System.out.println("sfasfasfsa "+nome);
 //		return null;
-		//System.out.println(nome);
 		
 		return userService.findUserSearchNome(nome,pageNumber);
 		//return produtoService.findProdutoById(nome);
@@ -335,6 +331,10 @@ public class UserController {
 	List<User> listAllClientesDoUser() {
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if(auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+			return userHasRoleService.listAllUsersWithRole(new Long(AppConstants.ROLES.indexOf("ROLE_CLIENTE") + 1));
+		}
 
 		return userService.listAllClientesDoUser(Long.parseLong(auth.getName()));
 	}

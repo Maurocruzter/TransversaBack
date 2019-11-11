@@ -32,8 +32,7 @@ public class StockPromocaoService {
 		if(aux.isEmpty()) {
 			return null;
 		}
-		System.out.println("Show me this please");
-		System.out.println(aux.getContent().get(0).getQuantidadeEmPromocao());
+
 		return aux.getContent().get(0);
 	}
 

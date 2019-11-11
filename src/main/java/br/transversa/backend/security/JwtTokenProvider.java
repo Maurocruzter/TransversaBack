@@ -42,10 +42,8 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
         
-//        System.out.println("Authorities" + userPrincipal.getAuthorities());
         
 
-        //System.out.println(userPrincipal.getAuthorities());
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())

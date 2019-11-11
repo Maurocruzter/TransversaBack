@@ -64,7 +64,6 @@ public class UserPrincipal implements UserDetails {
                 new SimpleGrantedAuthority(role.getRole().getName())
         ).collect(Collectors.toList());
 
-        //System.out.println(user.getUserHasRoles());
         return new UserPrincipal(
                 user.getId(),
                 user.getNome(),

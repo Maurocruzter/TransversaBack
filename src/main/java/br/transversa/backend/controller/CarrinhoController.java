@@ -45,7 +45,6 @@ public class CarrinhoController {
         loggedUser.setId(Long.parseLong(auth.getName()));
         Carrinho carrinho = new Carrinho();
         
-//        System.out.println("1");
         Optional<Carrinho> simpleCarrinho = 
         		carrinhoService.findCarrinhoByIdClienteAndIdVendedor(
         				loggedUser.getId(), 

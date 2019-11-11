@@ -82,7 +82,6 @@ public class UserService {
 	
 	public Page<User> findUserSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
-//		System.out.println(nome);
 		return userRepository.findUserByNome(nome, pageable);
 	}
 
@@ -102,8 +101,7 @@ public class UserService {
 	
 	public Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente) {
 		
-//		System.out.println("Vendedor " + idVendedor);
-//		System.out.println("Cliente " + idCliente);
+
 		return userRepository.findIfVendedorHasCliente(idVendedor, idCliente);
 	}
 

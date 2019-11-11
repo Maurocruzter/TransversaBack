@@ -66,6 +66,10 @@ public class ProdutoController {
 			@RequestParam("nome") String nome, 
 			@RequestParam("descricao") String descricao,
 			@RequestParam("preco") BigDecimal preco,
+			@RequestParam("comprimento") Float comprimento,
+			@RequestParam("largura") Float largura,
+			@RequestParam("altura") Float altura,
+			@RequestParam("peso") Float peso,
 			@RequestParam("stockInicial") String stockInicial) throws IOException{
 		
 		
@@ -73,9 +77,15 @@ public class ProdutoController {
 		
 		produto.setNome(nome);
 		produto.setDescricao(descricao);
+		
 		produto.setPreco(preco);
 		produto.setData(file.getBytes());
 		produto.setFileType(file.getContentType());
+		
+		produto.setComprimento(comprimento);
+		produto.setAltura(altura);
+		produto.setLargura(largura);
+		produto.setPeso(peso);
 		
 		UUID uuid = UUID.randomUUID();
 		
@@ -148,7 +158,6 @@ public class ProdutoController {
 	ResponseEntity<?> registrarProduto(@RequestBody NewPromocoesRequest promocao) {
 		
 		
-		System.out.println(promocao.getQuantidade());
 		
 		
 		
@@ -213,10 +222,13 @@ public class ProdutoController {
 	}
 	
 	@GetMapping(path = "/listPromocoes/page/{pageNumber}")
-	Page<Promocoes> listPromocoesByPage(
+	Page<StockPromocao> listPromocoesByPage(
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
+		
+		return promocoesService.findPromocoesByPageModified(pageNumber, new Date());
 
-		return promocoesService.findPromocoesByPage(pageNumber, new Date());
+
+//		return promocoesService.findPromocoesByPage(pageNumber, new Date());
 
 	}
 	
@@ -278,9 +290,7 @@ public class ProdutoController {
 	Page<Produto> searchProduto(@PathVariable(name = "nome", required = true) String nome,
 								@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 		
-//		System.out.println("sfasfasfsa "+nome);
 //		return null;
-		//System.out.println(nome);
 		
 		return produtoService.findPesquisaPrecoSearchNome(nome,pageNumber);
 		//return produtoService.findProdutoById(nome);

@@ -59,8 +59,11 @@ public class Produto implements Serializable {
 	@Column(length=45)
 	private String descricao;
 
-	@Column(length=20)
-	private String dimensoes;
+	private Float comprimento;
+	
+	private Float largura;
+	
+	private Float altura;
 
 	@Column(name="file_type", nullable=false, length=15)
 	private String fileType;
@@ -68,8 +71,7 @@ public class Produto implements Serializable {
 	@Column(nullable=false, length=45)
 	private String nome;
 
-	@Column(length=45)
-	private String peso;
+	private Float peso;
 
 	@Column(nullable=false, precision=10, scale=2)
 	private BigDecimal preco;
@@ -184,13 +186,6 @@ public class Produto implements Serializable {
 		this.descricao = descricao;
 	}
 
-	public String getDimensoes() {
-		return this.dimensoes;
-	}
-
-	public void setDimensoes(String dimensoes) {
-		this.dimensoes = dimensoes;
-	}
 
 	public String getFileType() {
 		return this.fileType;
@@ -208,11 +203,35 @@ public class Produto implements Serializable {
 		this.nome = nome;
 	}
 
-	public String getPeso() {
-		return this.peso;
+	public Float getComprimento() {
+		return comprimento;
 	}
 
-	public void setPeso(String peso) {
+	public void setComprimento(Float comprimento) {
+		this.comprimento = comprimento;
+	}
+
+	public Float getLargura() {
+		return largura;
+	}
+
+	public void setLargura(Float largura) {
+		this.largura = largura;
+	}
+
+	public Float getAltura() {
+		return altura;
+	}
+
+	public void setAltura(Float altura) {
+		this.altura = altura;
+	}
+
+	public Float getPeso() {
+		return peso;
+	}
+
+	public void setPeso(Float peso) {
 		this.peso = peso;
 	}
 

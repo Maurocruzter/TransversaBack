@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.transversa.backend.model.Promocoes;
+import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.PromocoesRepository;
+import br.transversa.backend.repository.StockPromocaoRepository;
 
 @Service
 @Transactional
@@ -19,6 +21,9 @@ public class PromocaoService {
 	
 	@Autowired
     PromocoesRepository promocoesRepository;
+	
+	@Autowired
+    StockPromocaoRepository stockPromocaoRepository;
 	
 
 	public void save(Promocoes promocao) {
@@ -30,9 +35,13 @@ public class PromocaoService {
 		return promocoesRepository.findPromocoesByPage(pageable, date);
 	}
 	
+	public Page<StockPromocao> findPromocoesByPageModified(int pageNumber, Date date) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return stockPromocaoRepository.findStockPromocoesAtivasByPage(pageable, date);
+	}
+	
 	public Promocoes findPromocoesByProdutoId(int pageNumber ,Long produtoId) {
 		
-		System.out.println("Esteve aqyu debtri");
 		Pageable pageable = PageRequest.of(pageNumber, 1);
 		Page<Promocoes> aux = promocoesRepository.findPromocoesByProdutoId(pageable, produtoId);
 		
