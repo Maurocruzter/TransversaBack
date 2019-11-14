@@ -99,14 +99,14 @@ public class ProdutoController {
         //Placing createdBy		
 		produto.setUser(loggedUser);
 		
-		Date myDate = parseDate("1992-04-14");
+		Date myDate = parseDate("1992-10-14");
 		
 		Promocoes promocaoReal = new Promocoes();
 		
 		promocaoReal.setCompraMinima(0);
 		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
-		promocaoReal.setDataFim(myDate);
-		promocaoReal.setDataInicio(myDate);
+		promocaoReal.setDataFim(new Timestamp(myDate.getTime()));
+		promocaoReal.setDataInicio(new Timestamp(myDate.getTime()));
 		promocaoReal.setDesconto(new BigDecimal(0));
 		
 		
@@ -183,8 +183,8 @@ public class ProdutoController {
 		
 		promocaoReal.setCompraMinima(promocao.getCompraMinima());
 		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
-		promocaoReal.setDataFim(promocao.getDataFim());
-		promocaoReal.setDataInicio(promocao.getDataInicio());
+		promocaoReal.setDataFim(new Timestamp(promocao.getDataFim().getTime()) );
+		promocaoReal.setDataInicio(new Timestamp(promocao.getDataInicio().getTime()));
 		promocaoReal.setDesconto(promocao.getDesconto());
 		Produto produto = new Produto();
 		produto.setId(promocao.getIdProduto());
@@ -224,8 +224,15 @@ public class ProdutoController {
 	@GetMapping(path = "/listPromocoes/page/{pageNumber}")
 	Page<StockPromocao> listPromocoesByPage(
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
-		
 		return promocoesService.findPromocoesByPageModified(pageNumber, new Date());
+
+	}
+	
+	
+	@GetMapping(path = "/listAllPromocoesVOffline")
+	List<StockPromocao> listAllPromocoesVOffline() {
+		
+		return promocoesService.findAllStockPromocoesAtivasVOffline(new Date());
 
 
 //		return promocoesService.findPromocoesByPage(pageNumber, new Date());
@@ -251,12 +258,7 @@ public class ProdutoController {
 			promocoesList.add(
 					stockPromocaoService.findPromocoesByProdutoId(
 							pageNumber, aux.getContent().get(i).getId())) ;
-			
-			
-//			promocoesList.add(promocoesService.findPromocoesByProdutoId(pageNumber, aux.getContent().get(i).getId())) ;
-			
 		}
-		
 		return promocoesList;
 //		return promocoesService.findProdutosByPage(pageNumber);
 //		return produtoService.findAllProdutoByPage(pageNumber);
@@ -319,6 +321,35 @@ public class ProdutoController {
 	@GetMapping(path = "/listAllProdutos")
 	List<Produto> listAllProdutos() {
 		return produtoService.findAllProdutos();
+	}
+	
+	@GetMapping(path = "/listAllProdutosVOffline")
+	List<StockPromocao> listAllProdutosVOffline() {
+		
+		System.out.println("Veio aqui");
+		
+		List<Produto> aux = stockPromocaoService.findProdutoAllRetrieveOnlyId();
+		
+		List<StockPromocao> promocoesList = new ArrayList<>();
+		
+		
+		int pageNumber = 0;
+		
+		
+		int tamanho = aux.size();
+		for(int i = 0; i < tamanho; i++) {
+			
+			promocoesList.add(
+					stockPromocaoService.findPromocoesByProdutoId(
+							pageNumber, aux.get(i).getId())) ;
+			
+			
+//			promocoesList.add(promocoesService.findPromocoesByProdutoId(pageNumber, aux.getContent().get(i).getId())) ;
+			
+		}
+		
+		
+		return promocoesList;
 	}
 	
 	

@@ -1,11 +1,14 @@
 package br.transversa.backend.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Promocoes;
 import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.StockPromocaoRepository;
@@ -23,7 +26,11 @@ public class StockPromocaoService {
 	
 	public Page<StockPromocao> findAllProdutoByPageRetrieveOnlyId(int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
-		return stockPromocaoRepository.findProdutoAllRetrieveOnlyId(pageable);
+		return stockPromocaoRepository.findProdutoAllByPageRetrieveOnlyId(pageable);
+	}
+	
+	public List<Produto> findProdutoAllRetrieveOnlyId() {
+		return stockPromocaoRepository.findProdutoAllRetrieveOnlyId();
 	}
 
 	public StockPromocao findPromocoesByProdutoId(int pageNumber ,Long produtoId) {

@@ -2,9 +2,12 @@ package br.transversa.backend.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 
 /**
@@ -31,7 +34,10 @@ public class StockPromocao implements Serializable {
 	private Promocoes promocoe;
 
 	@Transient
-	private Date dataInicio;
+	private Timestamp dataInicio;
+	
+	@Transient
+	private Timestamp dataFim;
 
 	@Transient
 	private int compraMinima;
@@ -39,8 +45,7 @@ public class StockPromocao implements Serializable {
 	@Transient
 	private int quantidadeEmStock;
 
-	@Transient
-	private Date dataFim;
+	
 
 	@Transient
 	private BigDecimal desconto;
@@ -95,12 +100,21 @@ public class StockPromocao implements Serializable {
 	
 	
 
-	public Date getDataInicio() {
+
+	public Timestamp getDataInicio() {
 		return dataInicio;
 	}
 
-	public void setDataInicio(Date dataInicio) {
+	public void setDataInicio(Timestamp dataInicio) {
 		this.dataInicio = dataInicio;
+	}
+
+	public Timestamp getDataFim() {
+		return dataFim;
+	}
+
+	public void setDataFim(Timestamp dataFim) {
+		this.dataFim = dataFim;
 	}
 
 	public int getCompraMinima() {
@@ -111,13 +125,6 @@ public class StockPromocao implements Serializable {
 		this.compraMinima = compraMinima;
 	}
 
-	public Date getDataFim() {
-		return dataFim;
-	}
-
-	public void setDataFim(Date dataFim) {
-		this.dataFim = dataFim;
-	}
 
 	public BigDecimal getDesconto() {
 		return desconto;
@@ -174,8 +181,8 @@ public class StockPromocao implements Serializable {
 			Long produtoId, BigDecimal preco, String nome , String uuid ) {
 		super();
 		this.id = id;
-		this.dataInicio = dataInicio;
-		this.dataFim = dataFim;
+		this.dataInicio = new Timestamp(dataInicio.getTime());
+		this.dataFim = new Timestamp(dataFim.getTime());
 		this.compraMinima = compraMinima;
 		this.desconto = desconto;
 		this.produtoId = produtoId;
@@ -189,8 +196,8 @@ public class StockPromocao implements Serializable {
 			Long produtoId, BigDecimal preco, String nome , String uuid, int quantidade ) {
 		super();
 		this.id = id;
-		this.dataInicio = dataInicio;
-		this.dataFim = dataFim;
+		this.dataInicio = new Timestamp(dataInicio.getTime());
+		this.dataFim = new Timestamp(dataFim.getTime());
 		this.compraMinima = compraMinima;
 		this.desconto = desconto;
 		this.produtoId = produtoId;
@@ -206,8 +213,8 @@ public class StockPromocao implements Serializable {
 			Long produtoId, BigDecimal preco, String nome , String uuid, int quantidade, int quantidadeEmStock ) {
 		super();
 		this.id = id;
-		this.dataInicio = dataInicio;
-		this.dataFim = dataFim;
+		this.dataInicio = new Timestamp(dataInicio.getTime());
+		this.dataFim = new Timestamp(dataFim.getTime());
 		this.compraMinima = compraMinima;
 		this.desconto = desconto;
 		this.produtoId = produtoId;

@@ -19,11 +19,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import br.transversa.backend.util.AppConstants;
 
 @Entity
 @Table(name = "users")
@@ -120,6 +123,9 @@ public class User {
 
 	@Column(nullable=false, length=13)
 	private String whatsapp;
+	
+	@Transient
+	private String tipoEstabelecimento2;
 
 	//bi-directional many-to-one association to Automovel
 	@OneToMany(mappedBy="user")
@@ -1014,7 +1020,40 @@ public class User {
 		this.longitude = longitude;
 		this.cnpj = cnpj;
 	}
+	
+	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,
+			Double latitude, Double longitude, String logradouro, String cnpj, String whatsapp,
+			String fixo, String pontoReferencia1, String pontoReferencia2, String observacao,
+			String cep, String casaNumero, String cidade, String inscricaoEstadual, 
+			Integer tipoEstabelecimento, String bairro
+			) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.cpf = cpf;
+		this.email = email;
+		this.celular = celular;
+		this.uuid = uuid;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.logradouro = logradouro;
+		this.cnpj = cnpj;
+		this.whatsapp = whatsapp;
+		this.fixo = fixo;
+		this.pontoReferencia1 = pontoReferencia1;
+		this.pontoReferencia2 = pontoReferencia2;
+		this.observacao = observacao;
+		this.cep = cep;
+		this.casaNumero = casaNumero;
+		this.cidade = cidade;
+		this.inscricaoEstadual = inscricaoEstadual;
+		this.tipoEstabelecimento2 = AppConstants.TIPO_ESTABELECIMENTOS.get(tipoEstabelecimento);
+		this.bairro = bairro;
+		
+	}
 
+	
 	public User(Long id, String nome) {
 		super();
 		this.id = id;
@@ -1026,6 +1065,17 @@ public class User {
 		this.id = id;
 	}
 
+	public String getTipoEstabelecimento2() {
+		return tipoEstabelecimento2;
+	}
+
+	public void setTipoEstabelecimento2(String tipoEstabelecimento2) {
+		this.tipoEstabelecimento2 = tipoEstabelecimento2;
+	}
+
+	
+	
+	
 	/*
 	 * @Id
 	 * 

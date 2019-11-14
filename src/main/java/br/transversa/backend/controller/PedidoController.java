@@ -38,6 +38,7 @@ import br.transversa.backend.model.Promocoes;
 import br.transversa.backend.model.User;
 import br.transversa.backend.payload.ApiResponse;
 import br.transversa.backend.payload.ListNovoPedidoRequest;
+import br.transversa.backend.payload.ListNovoPedidoRequestBulk;
 import br.transversa.backend.payload.PedidoAndEstadoPedidoCustom;
 import br.transversa.backend.payload.PedidoObservacaoRequest;
 import br.transversa.backend.service.CarrinhoService;
@@ -140,6 +141,18 @@ public class PedidoController {
 	@PostMapping(path = "/pedidoFuncionario/novo")
 	ResponseEntity fazerPedidoComoFuncionario(@RequestBody ListNovoPedidoRequest listNovoPedidoRequest) {
 
+		Long aux = fazerPedidoComoFuncionarioFunction(listNovoPedidoRequest);
+		
+		if(aux == null) {
+			return new ResponseEntity(new ApiResponse(true, "Ocorreu um erro"), HttpStatus.FORBIDDEN);
+		}
+
+		return new ResponseEntity(new ApiResponse(true, "" + aux), HttpStatus.CREATED);
+
+	}
+	
+	private Long fazerPedidoComoFuncionarioFunction(ListNovoPedidoRequest listNovoPedidoRequest) {
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		boolean isAdmin = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
@@ -168,18 +181,17 @@ public class PedidoController {
 				pedido.setUser2(clienteUser);
 				pedido.setTotalPedido(new BigDecimal(0));
 			} else {
-				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
+				return null;
 			}
 
 		} else {
-			return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
+			return null;
 		}
 
 		int indexPagamento = AppConstants.FORMA_PAGAMENTOS.indexOf(listNovoPedidoRequest.getFormaPagamento());
 
 		if (indexPagamento < 0) {
-			return new ResponseEntity(new ApiResponse(false, "O Método de pagamento especificado "),
-					HttpStatus.BAD_REQUEST);
+			return null;
 		}
 
 		pedido.setFormaPagamento(indexPagamento);
@@ -195,14 +207,14 @@ public class PedidoController {
 			int quantidade = listNovoPedidoRequest.getProdutosList().get(i).getQuantidade();
 
 			if (quantidade < 1) {
-				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
+				return null;
 			}
 
 			Promocoes promocao = promocaoService.findPromocoesByProdutoId(0,
 					listNovoPedidoRequest.getProdutosList().get(i).getId());
 
 			if (promocao == null) {
-				return new ResponseEntity(new ApiResponse(true, "Acesso negado!"), HttpStatus.FORBIDDEN);
+				return null;
 			}
 
 			PedidosHasProduto pedidoHasProduto = new PedidosHasProduto();
@@ -266,8 +278,23 @@ public class PedidoController {
 
 		pedidoService.createEstadoPedido(estadoPedido);
 
-		return new ResponseEntity(new ApiResponse(true, "" + pedido.getId()), HttpStatus.CREATED);
+		return pedido.getId();
 
+	}
+	
+	
+	@PostMapping(path = "/pedidoFuncionarioBulk/novo")
+	ResponseEntity fazerPedidoComoFuncionarioBulk(@RequestBody ListNovoPedidoRequestBulk pedidosOfflineList) {
+
+		
+		for(int i = 0; i< pedidosOfflineList.getPedidosOfflineList().size(); i++) {
+			
+			fazerPedidoComoFuncionarioFunction(pedidosOfflineList.getPedidosOfflineList().get(i));
+		}
+		
+		
+
+		return new ResponseEntity(new ApiResponse(true, ""), HttpStatus.CREATED);
 	}
 
 	@PostMapping(path = "/pedidoCliente/novo")
@@ -277,7 +304,7 @@ public class PedidoController {
 		boolean isCliente = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLIENTE"));
 
 		if (!isCliente) {
-			return new ResponseEntity(new ApiResponse(true, "Pedido efetuado com sucesso!"), HttpStatus.FORBIDDEN);
+			return new ResponseEntity(new ApiResponse(true, "Não está autorizado!"), HttpStatus.FORBIDDEN);
 		}
 
 		User loggedUser = new User();

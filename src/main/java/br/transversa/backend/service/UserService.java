@@ -99,6 +99,10 @@ public class UserService {
 		return userRepository.listAllClientesDoUser(id);
 	}
 	
+	public List<User> listAllClientesDoUserVoffline(Long id) {
+		return userRepository.listAllClientesDoUserVOffline(id);
+	}
+	
 	public Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente) {
 		
 

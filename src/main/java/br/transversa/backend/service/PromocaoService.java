@@ -1,6 +1,7 @@
 package br.transversa.backend.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,10 @@ public class PromocaoService {
 	public Page<StockPromocao> findPromocoesByPageModified(int pageNumber, Date date) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return stockPromocaoRepository.findStockPromocoesAtivasByPage(pageable, date);
+	}
+	
+	public List<StockPromocao> findAllStockPromocoesAtivasVOffline(Date date) {
+		return stockPromocaoRepository.findAllStockPromocoesAtivasVOffline(date);
 	}
 	
 	public Promocoes findPromocoesByProdutoId(int pageNumber ,Long produtoId) {

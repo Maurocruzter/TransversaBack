@@ -53,6 +53,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "u.uuid, u.latitude, u.longitude, u.logradouro, u.cnpj) from User u WHERE u.user2.id = :id")
 	List<User> listAllClientesDoUser(Long id);
 	
+	
+	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
+			+ "u.uuid, u.latitude, u.longitude, u.logradouro, u.cnpj, u.whatsapp, u.fixo, u.pontoReferencia1, "
+			+ "u.pontoReferencia2, u.observacao, u.cep, u.casaNumero, u.cidade, u.inscricaoEstadual, "
+			+ "u.tipoEstabelecimento, u.bairro) from User u WHERE u.user2.id = :id")
+	List<User> listAllClientesDoUserVOffline(Long id);
+
 	@Query("select new User(u.id) from User u WHERE u.id = :idCliente AND u.user2.id = :idVendedor")
 	Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente);
 	
