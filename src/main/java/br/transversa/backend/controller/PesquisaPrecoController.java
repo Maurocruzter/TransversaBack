@@ -54,6 +54,63 @@ public class PesquisaPrecoController {
 	PesquisaPrecoService pesquisaPrecoService;
 	
 	
+	
+	@RequestMapping(value = "/pesquisaPrecoBulk/add", method = RequestMethod.POST)
+	ResponseEntity<?> registrarVariosProdutos(
+			@RequestParam List<String> razaoSocial,
+			@RequestParam List<String> endereco,
+			@RequestParam List<BigInteger> codigoBarras,
+			@RequestParam List<String> descricao,
+			@RequestParam List<String> marca,
+			@RequestParam List<String> nome,
+			@RequestParam List<BigDecimal> preco,
+			@RequestParam List<MultipartFile>  file) throws IOException {
+		
+		
+		System.out.println("Entrou aqui");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
+		
+		if(!isVendedor) {
+			return new ResponseEntity(new ApiResponse(true, "Produto Inválido!"), HttpStatus.FORBIDDEN);
+		}
+
+		
+		User loggedUser = new User();
+        loggedUser.setId(Long.parseLong(auth.getName()));
+		
+        List<Pesquisapreco> pesquisaPrecoList = new ArrayList<>();
+        
+        
+		for(int i = 0; i<descricao.size(); i++) {
+			
+			Pesquisapreco pesquisaPreco = new Pesquisapreco();
+			
+			pesquisaPreco.setCodigoBarras(codigoBarras.get(i));
+			pesquisaPreco.setData(file.get(i).getBytes());
+			pesquisaPreco.setFileType(file.get(i).getContentType());
+			pesquisaPreco.setDescricao(descricao.get(i));
+			pesquisaPreco.setEndereco(endereco.get(i));
+			pesquisaPreco.setMarca(marca.get(i));
+			pesquisaPreco.setNome(nome.get(i));
+			pesquisaPreco.setPreco(preco.get(i));
+			pesquisaPreco.setRazaoSocial(razaoSocial.get(i));
+			pesquisaPreco.setUser(loggedUser);
+			UUID uuid = UUID.randomUUID();
+			pesquisaPreco.setUuid(uuid.toString());
+			
+			pesquisaPrecoList.add(pesquisaPreco);
+		}
+		
+		
+		pesquisaPrecoService.createBulk(pesquisaPrecoList);
+
+		
+
+
+		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.CREATED);
+
+	}
 
 	@PostMapping(path = "/pesquisaPreco/add")
 	ResponseEntity<?> registrarProduto(
@@ -104,19 +161,9 @@ public class PesquisaPrecoController {
 		}
 		
 		
-			
-//		UUID uuid = UUID.randomUUID();
-//		
-//		pesquisaPreco.setUuid(uuid.toString());
-//		
-//		
-//             
-//        //Placing createdBy		
-//        pesquisaPreco.setUser(loggedUser);
-		
 		pesquisaPrecoService.createBulk(pesquisaPrecoList);
-		//produtoService.save(produto);
-        return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
+
+		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
                     HttpStatus.CREATED);
 
 		
