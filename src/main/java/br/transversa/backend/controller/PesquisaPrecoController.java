@@ -67,7 +67,6 @@ public class PesquisaPrecoController {
 			@RequestParam List<MultipartFile>  file) throws IOException {
 		
 		
-		System.out.println("Entrou aqui");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
 		

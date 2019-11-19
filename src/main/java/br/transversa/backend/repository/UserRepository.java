@@ -1,5 +1,8 @@
 package br.transversa.backend.repository;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,11 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.User;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -43,6 +42,46 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "u.logradouro) from User u  "
 			+ "WHERE u.nome LIKE CONCAT('%',:nome,'%')")
 	Page<User> findUserByNome(@Param("nome") String nome, Pageable pageable);
+	
+	
+	
+//	@Query(value="SELECT new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, u.latitude, u.longitude, "
+//			+ "u.logradouro) from User u  "
+//			+ "WHERE "
+//			+ 	"CASE "
+//			+ 		"WHEN nome < 1 THEN "
+//			+ 							" u.nome = :nome "
+//			+ 		"ELSE "
+//			+ 			" u.nome = :nome "
+//			+ 	"END")
+//			+ 			"WHERE u.nome = -1")
+	
+////	SELECT e.name, CASE WHEN (u.nome = 1) THEN 1 ELSE 0 END from Employee e
+//	@Query(value="SELECT new User(u.id, CASE WHEN (u.nome = 1) THEN '1' ELSE u.nome END, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, u.latitude, u.longitude, "
+//			+ "u.logradouro) from User u  "
+//			+ "")
+////			+ "WHERE u.nome LIKE CONCAT('%',:nome,'%')")
+//	Page<User> findUserByFields(@Param("nome") String nome,
+//			Pageable pageable);
+	
+
+//	CASE WHEN (e.salary >= 100000) THEN 1 WHEN (e.salary < 100000) THEN 2 ELSE 0 END FROM Employee e
+
+	
+//	WHERE 
+//
+//	CASE WHEN 1 = 2 THEN 
+//		dbfrotas.users.id_user = 1
+//	ELSE
+//		dbfrotas.users.id_user = 2
+//	END
+//	
+//	
+//	SELECT e.name, 
+//		CASE WHEN (e.salary >= 100000) THEN 1 
+//		WHEN (e.salary < 100000) THEN 2 
+//		ELSE 0 END FROM Employee e
+
 
 	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, "
 			+ "ROUND(u.latitude,7), ROUND(u.longitude,7), u.logradouro) from User u ")

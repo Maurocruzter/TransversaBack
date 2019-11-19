@@ -454,6 +454,32 @@ public class UserController {
 		// return produtoService.findProdutoById(nome);
 
 	}
+	
+	
+	@GetMapping(path = "/user/search/nome/{nome}/sobrenome/{sobrenome}/cpf/{cpf}/cnpj/{cnpj}/page/{pageNumber}")
+	Page<User> searchUserByFields(
+			@PathVariable(name = "nome", required = true) String nome,
+			@PathVariable(name = "sobrenome", required = true) String sobrenome,
+			@PathVariable(name = "cpf", required = true) String cpf,
+			@PathVariable(name = "cnpj", required = true) String cnpj,
+			@PathVariable(name = "pageNumber", required = true) int pageNumber) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) ||
+				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"))) {
+
+			return userService.findUserFilterFields(nome, sobrenome, cpf, cnpj, pageNumber);
+		}
+		else {
+			return null;
+		}
+		
+		
+		// return produtoService.findProdutoById(nome);
+
+	}
+	
 
 	@GetMapping(path = "/listUsers/page/{pageNumber}")
 	Page<User> listUsersByPage(@PathVariable(name = "pageNumber", required = false) int pageNumber) {
@@ -487,9 +513,6 @@ public class UserController {
 
 	@GetMapping(path = "/listAllClientesDoUser")
 	List<User> listAllClientesDoUser() {
-
-		System.out.println("This is not being executed");
-
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
 		if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {

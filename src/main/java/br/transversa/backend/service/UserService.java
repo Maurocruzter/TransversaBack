@@ -17,6 +17,7 @@ import br.transversa.backend.model.User;
 import br.transversa.backend.model.UserHasRole;
 import br.transversa.backend.repository.UserHasRoleRepository;
 import br.transversa.backend.repository.UserRepository;
+import br.transversa.backend.repository.custom.CustomUserRepository;
 //import br.transversa.backend.repository.UsersRepository;
 import br.transversa.backend.security.JwtTokenProvider;
 
@@ -32,6 +33,9 @@ public class UserService {
 
     @Autowired
     UserRepository userRepository;
+    
+    @Autowired
+    CustomUserRepository customUserRepository;
     
     @Autowired
     UserHasRoleRepository userHasRoleRepository;
@@ -83,6 +87,14 @@ public class UserService {
 	public Page<User> findUserSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return userRepository.findUserByNome(nome, pageable);
+	}
+	
+	
+	public Page<User> findUserFilterFields(String nome, String sobrenome, String cpf, String cnpj, int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+//		return userRepository.findUserByFields(nome, pageable);
+		
+		return customUserRepository.findUserByFields(nome, sobrenome, cpf, cnpj, pageable);
 	}
 
 
