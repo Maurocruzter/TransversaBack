@@ -1,11 +1,16 @@
 package br.transversa.backend.repository;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Optional;
+
+import javax.persistence.Column;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -33,6 +38,23 @@ public interface PromocoesRepository extends JpaRepository<Promocoes, Long> {
 	
 //	@Query("SELECT new Promocoes(p.id, p.produto.nome, p.produto.preco, p.produto.uuid) from Promocoes p GROUP BY p.produto.id")
 //    Page<Promocoes> findProdutosByPage(Pageable pageable);
+	
+	
+	@Modifying
+	@Query("UPDATE Promocoes p set p.compraMinima = :compraMinima, "
+			+ "p.dataAdicionado = :dataAdicionado, "
+			+ "p.dataFim = :dataFim, "
+			+ "p.dataInicio = :dataInicio, "
+			+ "p.precoPromocao = :precoPromocao, "
+			+ "p.desconto = :desconto WHERE p.id = :idPromocao")
+	void updatePromocao(int compraMinima, Timestamp dataAdicionado, 
+			Date dataFim, Date dataInicio, BigDecimal desconto, Long idPromocao, BigDecimal precoPromocao);
+	
+	
+	@Query(value = "SELECT new Promocoes(p.id, p.stock.produto.preco)  FROM Promocoes p "
+			+ "WHERE p.stock.produto.id = :produtoId")
+	Promocoes findPromocaoAndPrecoIdByProdutoId(Long produtoId);
+
 }
 
  

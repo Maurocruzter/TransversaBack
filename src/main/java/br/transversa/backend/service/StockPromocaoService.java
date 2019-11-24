@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Promocoes;
@@ -14,6 +15,7 @@ import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.StockPromocaoRepository;
 
 @Service
+@Transactional
 public class StockPromocaoService {
 	
 	@Autowired
@@ -22,6 +24,15 @@ public class StockPromocaoService {
 	
 	public void save(StockPromocao stockPromocao) {
 		stockPromocaoRepository.save(stockPromocao);
+	}
+	
+	public void update(int quantidade, Long idStock) {
+		
+		System.out.println("qtd");
+		System.out.println(quantidade);
+		System.out.println("idStock");
+		System.out.println(idStock);
+		stockPromocaoRepository.updateStockPromocao(quantidade, idStock);
 	}
 	
 	public Page<StockPromocao> findAllProdutoByPageRetrieveOnlyId(int pageNumber) {
@@ -41,6 +52,13 @@ public class StockPromocaoService {
 		}
 
 		return aux.getContent().get(0);
+	}
+	
+	
+	public Long findStockPromocaoByPromocaoId(Long promocaoId) {
+		
+
+		return stockPromocaoRepository.findStockPromocaoRetrieveOnlyId(promocaoId).getId();
 	}
 
 

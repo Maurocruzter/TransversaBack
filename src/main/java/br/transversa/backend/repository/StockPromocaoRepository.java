@@ -2,12 +2,15 @@ package br.transversa.backend.repository;
 
 
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -48,6 +51,17 @@ public interface StockPromocaoRepository extends JpaRepository<StockPromocao, Lo
 			+ "p.promocoe.stock.produto.uuid, p.quantidadeEmPromocao, p.promocoe.stock.quantidade )  FROM StockPromocao p "
 			+ "WHERE p.promocoe.dataInicio <= :dataAtual AND p.promocoe.dataFim >= :dataAtual ")
 	List<StockPromocao> findAllStockPromocoesAtivasVOffline(Date dataAtual);
+	
+	
+	
+	@Modifying
+	@Query("UPDATE StockPromocao sp set sp.quantidadeEmPromocao = :quantidade "
+			+ "WHERE sp.id = :idStock")
+	void updateStockPromocao(int quantidade, Long idStock);
+	
+	
+	@Query("select new StockPromocao(sp.id) from StockPromocao sp WHERE sp.promocoe.id = :idPromocao")
+	StockPromocao findStockPromocaoRetrieveOnlyId(Long idPromocao);
 	
 	
 

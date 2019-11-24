@@ -13,15 +13,20 @@ import org.springframework.stereotype.Service;
 import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Promocoes;
+import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.ObservacaoEstadoPedidoRepository;
 import br.transversa.backend.repository.ProdutoRepository;
 import br.transversa.backend.repository.PromocoesRepository;
+import br.transversa.backend.repository.custom.CustomProdutoRepository;
 
 @Service
 public class ProdutoService {
 	
 	@Autowired
 	ProdutoRepository produtoRepository;
+	
+	@Autowired
+	CustomProdutoRepository customProdutoRepository;
 	
 	@Autowired
 	ObservacaoEstadoPedidoRepository observacaoEstadoPedidoRepository;
@@ -69,6 +74,11 @@ public class ProdutoService {
 	public Page<Produto> findPesquisaPrecoSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return produtoRepository.findProdutoByNome(nome, pageable);
+	}
+	
+	public Page<StockPromocao> findProdutoFilter(String nome, String precoMin, String precoMax, int pageNumber) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return customProdutoRepository.findProdutoByFields(nome, precoMin, precoMax, pageable);
 	}
 	
 	public Produto findProdutoById(Long id) {

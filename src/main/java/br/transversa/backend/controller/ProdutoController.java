@@ -108,6 +108,7 @@ public class ProdutoController {
 		promocaoReal.setDataFim(new Timestamp(myDate.getTime()));
 		promocaoReal.setDataInicio(new Timestamp(myDate.getTime()));
 		promocaoReal.setDesconto(new BigDecimal(0));
+		promocaoReal.setPrecoPromocao(new BigDecimal(0));
 		
 		
 		produtoService.save(produto);
@@ -193,6 +194,8 @@ public class ProdutoController {
         loggedUser.setId(Long.parseLong(auth.getName()));
 		promocaoReal.setUser(loggedUser);
 		
+		promocaoReal.setProdutoId(promocao.getIdProduto());
+		
 		Optional<Promocoes> str = promocoesService.findIfPromocaoExiste(promocao.getIdProduto(), promocao.getDataInicio(), promocao.getDataFim());
 
 		if(str.isPresent()) {
@@ -200,17 +203,37 @@ public class ProdutoController {
                     HttpStatus.BAD_REQUEST);
 		}
 		
+
+		Promocoes promocaoAux = promocoesService.findPromocaoIdByProdutoId(promocao.getIdProduto());
 		
 		
-		promocaoReal.setStock(
-				stockService.findStockByProdutoId(promocao.getIdProduto()));
-		promocoesService.save(promocaoReal);
+//		
+//		promocaoAux.getPreco().multiply(100)
+//		promocaoAux.setPrecoPromocao(
+//				pro
+//				
+//				precoPromocao);
+		
+		promocaoReal.setPrecoPromocao(
+				new BigDecimal(100)
+					.subtract(
+							promocaoReal.getDesconto())
+								.multiply(promocaoAux.getPreco())
+									.divide(new BigDecimal(100))
+					);
+
+		promocoesService.update(promocaoReal, 
+				promocaoAux.getId());
 
 		StockPromocao stockPromocao = new StockPromocao();
 		stockPromocao.setPromocoe(promocaoReal);
 		stockPromocao.setQuantidadeEmPromocao(promocao.getQuantidade());
 		
-		stockPromocaoService.save(stockPromocao);
+		
+		Long idStock = stockPromocaoService.findStockPromocaoByPromocaoId(promocaoAux.getId());
+
+		stockPromocaoService.update(promocao.getQuantidade(), 
+				idStock);
 
 		
 
@@ -233,9 +256,6 @@ public class ProdutoController {
 	List<StockPromocao> listAllPromocoesVOffline() {
 		
 		return promocoesService.findAllStockPromocoesAtivasVOffline(new Date());
-
-
-//		return promocoesService.findPromocoesByPage(pageNumber, new Date());
 
 	}
 	
@@ -298,6 +318,20 @@ public class ProdutoController {
 		//return produtoService.findProdutoById(nome);
 
 	}
+	
+	@GetMapping(path = "/produto/search/nome/{nome}/precoMin/{precoMin}/precoMax/{precoMax}/page/{pageNumber}")
+	Page<StockPromocao> searchProdutoByFields(
+			@PathVariable(name = "nome", required = true) String nome,
+			@PathVariable(name = "precoMin", required = true) String precoMin,
+			@PathVariable(name = "precoMax", required = true) String precoMax,
+			@PathVariable(name = "pageNumber", required = true) int pageNumber) {
+		
+		return produtoService.findProdutoFilter(nome, precoMin, precoMax, pageNumber);
+
+	}
+	
+	
+	
 	
 //	@GetMapping(path = "/produto/searchById/{id}")
 //	Produto searchProdutoById(@PathVariable(name = "id", required = true) Long id) {

@@ -61,6 +61,9 @@ public class Promocoes implements Serializable {
 	@Column(precision=10, scale=2)
 	private BigDecimal desconto;
 	
+	@Column(name="preco_promocao")
+	private BigDecimal precoPromocao; 
+	
 	@Transient
 	private Long produtoId;
 	
@@ -150,6 +153,16 @@ public class Promocoes implements Serializable {
 		return this.user;
 	}
 
+	
+	
+	public BigDecimal getPrecoPromocao() {
+		return precoPromocao;
+	}
+
+	public void setPrecoPromocao(BigDecimal precoPromocao) {
+		this.precoPromocao = precoPromocao;
+	}
+
 	public void setUser(User user) {
 		this.user = user;
 	}
@@ -216,6 +229,12 @@ public class Promocoes implements Serializable {
 	public Promocoes(Long id) {
 		super();
 		this.id = id;
+	}
+	
+	public Promocoes(Long id, BigDecimal precoProduto) {
+		super();
+		this.id = id;
+		this.preco = precoProduto;
 	}
 
 	public Long getProdutoId() {
