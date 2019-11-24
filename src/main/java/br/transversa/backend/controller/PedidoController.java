@@ -195,6 +195,7 @@ public class PedidoController {
 		}
 
 		pedido.setFormaPagamento(indexPagamento);
+		pedido.setDataAdicionadoPedido(new Timestamp(new Date().getTime()));
 		// pedidoService.createOrUpdatePedido(pedido);
 		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
 
@@ -317,6 +318,7 @@ public class PedidoController {
 		// Setting quem disparou vai pagar a compra
 		pedido.setUser2(loggedUser);
 
+		pedido.setDataAdicionadoPedido(new Timestamp(new Date().getTime()));
 		
 		BigDecimal total = new BigDecimal(0);
 
@@ -442,9 +444,12 @@ public class PedidoController {
 		estadoPedido.setUser(loggedUser);
 		estadoPedido.setObservacao(observacao.getObservacao());
 		
-		if (observacao.getEstado() < 20) {
+		System.out.println("ATé aqui");
+		System.out.println(observacao.getEstado());
+		
+//		if (observacao.getEstado() < 20) {
 			estadoPedido.setCurrestado(observacao.getEstado());
-		} 
+//		} 
 
 		pedidoService.createEstadoPedido(estadoPedido);
 
@@ -479,9 +484,12 @@ public class PedidoController {
 
 		} else if (estadoPedido.getCurrestado() == 99) {
 
+			System.out.println("Estou dentro odo estado 99");
 			pedidoNovo.setIsFinalizado((byte) 1);
-			pedidoService.setPedidoCancelado(pedidoNovo.getIsCancelado(), pedidoNovo.getId());
+			pedidoService.setPedidoCancelado(pedidoNovo.getIsFinalizado(), pedidoNovo.getId());
 
+			return new ResponseEntity(new ApiResponse(true, "Pedido efetuado com sucesso!"), HttpStatus.CREATED);
+			
 		}
 		
 		if (observacao.getEstado() > 20) {
@@ -619,6 +627,63 @@ public class PedidoController {
 		return null;
 
 	}
+	
+	@GetMapping(path = "/pedido/search/razaoSocial/{razaoSocial}/"
+			+ "precoMin/{precoMin}/precoMax/{precoMax}/"
+			+ "cpf/{cpf}/cnpj/{cnpj}/idPedido/{idPedido}/"
+			+ "dataInicio/{dataInicio}/dataFim/{dataFim}/"
+			+ "estadoPedido/{estadoPedido}/"
+			+ "page/{pageNumber}")
+	public Page<EstadoPedido> searchPedidoByFields(
+			@PathVariable(name = "razaoSocial", required = true) String razaoSocial,
+			@PathVariable(name = "precoMin", required = true) String precoMin,
+			@PathVariable(name = "precoMax", required = true) String precoMax,
+			@PathVariable(name = "cpf", required = true) String cpf,
+			@PathVariable(name = "cnpj", required = true) String cnpj,
+			@PathVariable(name = "idPedido", required = true) Long idPedido,
+			@PathVariable(name = "dataInicio", required = true) String dataInicio,
+			@PathVariable(name = "dataFim", required = true) String dataFim,
+			@PathVariable(name = "estadoPedido", required = true) int estadoPedido,
+			@PathVariable(name = "pageNumber", required = true) int pageNumber) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User loggedUser = new User();
+		loggedUser.setId(Long.parseLong(auth.getName()));
+		
+
+		boolean isAdmin = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+		boolean isBase = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"));
+
+		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_VENDEDOR"));
+
+		boolean isCliente = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CLIENTE"));
+		
+		boolean isEntregador = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ENTREGADOR"));
+
+		if (isAdmin || isBase) {
+			return pedidoService.findPedidoFilter(razaoSocial, precoMin, precoMax, cpf, cnpj, idPedido, pageNumber, 0, loggedUser.getId(),
+					dataInicio, dataFim, estadoPedido);
+		}
+		
+		if (isVendedor) {
+			return pedidoService.findPedidoFilter(razaoSocial, precoMin, precoMax, cpf, cnpj, idPedido, pageNumber, 1, loggedUser.getId(),
+					dataInicio, dataFim, estadoPedido);
+		}
+		if (isCliente) {
+			return pedidoService.findPedidoFilter(razaoSocial, precoMin, precoMax, cpf, cnpj, idPedido, pageNumber, 2, loggedUser.getId(),
+					dataInicio, dataFim, estadoPedido);
+		}
+		
+		if(isEntregador) {
+			return pedidoService.findPedidoFilter(razaoSocial, precoMin, precoMax, cpf, cnpj, idPedido, pageNumber, 3, loggedUser.getId(),
+					dataInicio, dataFim, estadoPedido);
+		}
+		
+		return null;
+
+	}
+	
 
 	@GetMapping(path = "/pedidosPendentes/page/{pageNumber}")
 	public Page<EstadoPedido> listarPedidosPendentes(

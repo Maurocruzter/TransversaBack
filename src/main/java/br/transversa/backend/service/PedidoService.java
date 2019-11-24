@@ -1,5 +1,6 @@
 package br.transversa.backend.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,13 @@ import br.transversa.backend.model.EstadoPedido;
 import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Pedido;
 import br.transversa.backend.model.PedidosHasProduto;
+import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.EntregadorPedidoRepository;
 import br.transversa.backend.repository.EstadoPedidoRepository;
 import br.transversa.backend.repository.ObservacaoEstadoPedidoRepository;
 import br.transversa.backend.repository.PedidoHasProdutoRepository;
 import br.transversa.backend.repository.PedidoRepository;
+import br.transversa.backend.repository.custom.CustomPedidoRepository;
 
 @Service
 @Transactional
@@ -39,6 +42,11 @@ public class PedidoService {
 	
 	@Autowired
 	EntregadorPedidoRepository entregadorPedidoRepository;
+	
+	@Autowired
+	CustomPedidoRepository customPedidoRepository;
+	
+	
 	
 	public void createBulk(List<PedidosHasProduto> listPedidoHasProduto) {
 		pedidoHasProdutoRepository.saveAll(listPedidoHasProduto);
@@ -78,6 +86,15 @@ public class PedidoService {
 		
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return estadoPedidoRepository.findPedidos(pageable);
+	}
+	
+	
+	public Page<EstadoPedido> findPedidoFilter(String razaoSocial, String precoMin, String precoMax,
+			String cpf, String cnpj, Long idPedido, int pageNumber, int perfil, Long idUser, String dataInicio, String dataFim,
+			int estadoPedido) {
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return customPedidoRepository.findPedidoByFields(razaoSocial, precoMin, precoMax, cpf, cnpj, idPedido, pageable, 
+				perfil, idUser, dataInicio, dataFim, estadoPedido);
 	}
 	
 	public Page<EstadoPedido> listarPedidosVendedor(Long idVendedor,int pageNumber) {

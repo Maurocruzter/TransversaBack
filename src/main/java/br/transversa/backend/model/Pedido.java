@@ -49,6 +49,9 @@ public class Pedido implements Serializable {
 	
 	@Column(name="cliente_reclamou_estado")
 	private int clienteReclamouEstado;
+	
+	@Column(name="data_adicionado_pedido")
+	private Timestamp dataAdicionadoPedido;
 
 	//bi-directional many-to-one association to EstadoPedido
 	@OneToMany(mappedBy="pedido")
@@ -86,6 +89,7 @@ public class Pedido implements Serializable {
 		this.id = id;
 	}
 
+	
 
 
 //	public Timestamp getDataAdicionado() {
@@ -102,6 +106,18 @@ public class Pedido implements Serializable {
 
 
 	
+
+	public Timestamp getDataAdicionadoPedido() {
+		return dataAdicionadoPedido;
+	}
+
+
+
+	public void setDataAdicionadoPedido(Timestamp dataAdicionadoPedido) {
+		this.dataAdicionadoPedido = dataAdicionadoPedido;
+	}
+
+
 
 	public byte getIsAprovado() {
 		return isAprovado;
