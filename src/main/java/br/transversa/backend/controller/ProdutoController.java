@@ -139,6 +139,91 @@ public class ProdutoController {
 		
 	}
 	
+	@PostMapping(path = "/produto/edit/{idProduto}")
+	ResponseEntity<?> editarProduto(
+			@PathVariable(name = "idProduto") Long idProduto,
+			@RequestParam(name = "file", required = false) MultipartFile file,
+			@RequestParam("nome") String nome, 
+			@RequestParam("descricao") String descricao,
+			@RequestParam("preco") BigDecimal preco,
+			@RequestParam("comprimento") Float comprimento,
+			@RequestParam("largura") Float largura,
+			@RequestParam("altura") Float altura,
+			@RequestParam("peso") Float peso,
+			@RequestParam("stockInicial") String stockInicial) throws IOException{
+				
+		Produto produto = new Produto();
+		produto.setId(idProduto);
+		
+		produto.setNome(nome);
+		produto.setDescricao(descricao);
+		
+		produto.setPreco(preco);
+		
+		
+		
+		produto.setComprimento(comprimento);
+		produto.setAltura(altura);
+		produto.setLargura(largura);
+		produto.setPeso(peso);
+		
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User loggedUser = new User();
+        loggedUser.setId(Long.parseLong(auth.getName()));
+        
+        if(file != null) {
+			produto.setData(file.getBytes());
+			produto.setFileType(file.getContentType());
+			produtoService.editIncludesFile(produto);
+		} else {
+			produtoService.editNoFile(produto);
+		}
+       
+        
+
+        
+//		
+//		Date myDate = parseDate("1992-10-14");
+//		
+//		Promocoes promocaoReal = new Promocoes();
+//		
+//		promocaoReal.setCompraMinima(0);
+//		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
+//		promocaoReal.setDataFim(new Timestamp(myDate.getTime()));
+//		promocaoReal.setDataInicio(new Timestamp(myDate.getTime()));
+//		promocaoReal.setDesconto(new BigDecimal(0));
+//		promocaoReal.setPrecoPromocao(new BigDecimal(0));
+//		
+//		
+//		produtoService.save(produto);
+//		
+//		Stock stock = new Stock();
+//		stock.setProduto(produto);
+//		stock.setQuantidade(new Integer(stockInicial));
+//		
+//		stockService.save(stock);
+//		
+//		//promocaoReal.setProduto(produto);
+//        loggedUser.setId(Long.parseLong(auth.getName()));
+//		promocaoReal.setUser(loggedUser);
+//		
+//		promocaoReal.setStock(stock);
+//		promocoesService.save(promocaoReal);
+//		
+//		
+//		StockPromocao stockPromocao = new StockPromocao();
+//		stockPromocao.setPromocoe(promocaoReal);
+//		stockPromocao.setQuantidadeEmPromocao(0);
+//		
+//		stockPromocaoService.save(stockPromocao);
+//		
+        return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
+                    HttpStatus.CREATED);
+
+		
+	}
+	
 	private Date dateFromUTC(Date date){
 	    return new Date(date.getTime() + Calendar.getInstance().getTimeZone().getOffset(date.getTime()));
 	}
@@ -305,6 +390,15 @@ public class ProdutoController {
 	Produto carregarProduto(@PathVariable(name = "id", required = true) Long id) {
 		
 		return produtoService.findPesquisaPrecoById(id);
+
+	}
+	
+	@GetMapping(path = "/produtoDetails/{id}")
+	Produto carregarProdutoDetails(@PathVariable(name = "id", required = true) Long id) {
+		
+		System.out.println("fasfasf");
+		
+		return produtoService.findProdutoDetailsById(id);
 
 	}
 	

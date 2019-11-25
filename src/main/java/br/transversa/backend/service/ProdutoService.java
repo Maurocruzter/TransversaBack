@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.transversa.backend.model.ObservacaoEstadoPedido;
 import br.transversa.backend.model.Produto;
@@ -20,6 +21,7 @@ import br.transversa.backend.repository.PromocoesRepository;
 import br.transversa.backend.repository.custom.CustomProdutoRepository;
 
 @Service
+@Transactional
 public class ProdutoService {
 	
 	@Autowired
@@ -85,6 +87,26 @@ public class ProdutoService {
 
 
 		return produtoRepository.findProdutoById(id);
+	}
+
+	public Produto findProdutoDetailsById(Long id) {
+		return produtoRepository.findProdutoDetailsById(id);
+	}
+
+	public void editIncludesFile(Produto produto) {
+		produtoRepository.editIncludesFile(produto.getNome(), 
+				produto.getDescricao(), produto.getComprimento(), produto.getLargura(), 
+				produto.getAltura(), produto.getPeso(), produto.getPreco(), produto.getData(), produto.getFileType(),
+				produto.getId());
+		
+	}
+
+	public void editNoFile(Produto produto) {
+		produtoRepository.editNoFile(produto.getNome(), 
+				produto.getDescricao(), produto.getComprimento(), produto.getLargura(), 
+				produto.getAltura(), produto.getPeso(), produto.getPreco(),
+				produto.getId());
+		
 	}
 
     

@@ -505,6 +505,20 @@ public class Produto implements Serializable {
 		this.preco = preco;
 		this.uuid = uuid;
 	}
+	
+	public Produto(Long id, String descricao, String nome, BigDecimal preco, String uuid, 
+			Float comprimento, Float largura, Float altura, Float peso) {
+		super();
+		this.id = id;
+		this.descricao = descricao;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+		this.comprimento = comprimento;
+		this.largura = largura;
+		this.altura = altura;
+		this.peso = peso;
+	}
 
 
 

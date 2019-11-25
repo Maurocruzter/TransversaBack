@@ -1,11 +1,13 @@
 package br.transversa.backend.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -33,6 +35,10 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 	@Query("select new Produto(p.id, p.descricao, p.nome, p.preco, p.uuid) from Produto p WHERE p.id = :id")
 	Produto findProdutoById(Long id);
 	
+	@Query("select new Produto(p.id, p.descricao, p.nome, p.preco, p.uuid, "
+			+ " p.comprimento, p.largura, p.altura, p.peso) from Produto p WHERE p.id = :id")
+	Produto findProdutoDetailsById(Long id);
+	
 	@Query("select new Produto(p.preco) from Produto p WHERE p.id = :id")
 	Optional<Produto> findProdutoPrecoById(Long id);
 	
@@ -57,5 +63,22 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 	
 	@Query(value="SELECT new Produto(p.id, p.descricao, p.nome, p.preco, p.uuid) FROM Produto p")
 	List<Produto>findAllProdutos();
+
+	
+	@Modifying
+	@Query("UPDATE Produto p set p.nome = :nome, p.descricao = :descricao, "
+			+ "p.comprimento = :comprimento, p.largura = :largura, "
+			+ "p.altura = :altura, p.peso = :peso, p.preco = :preco, "
+			+ "p.data = :file, p.fileType = :fileType WHERE p.id = :idProduto")
+	void editIncludesFile(String nome, String descricao, Float comprimento, Float largura, Float altura, Float peso,
+			BigDecimal preco, byte[] file, String fileType, Long idProduto);
+
+	@Modifying
+	@Query("UPDATE Produto p set p.nome = :nome, p.descricao = :descricao, "
+			+ "p.comprimento = :comprimento, p.largura = :largura, "
+			+ "p.altura = :altura, p.peso = :peso, p.preco = :preco "
+			+ " WHERE p.id = :idProduto")
+	void editNoFile(String nome, String descricao, Float comprimento, Float largura, Float altura, Float peso,
+			BigDecimal preco, Long idProduto);
 	
 }

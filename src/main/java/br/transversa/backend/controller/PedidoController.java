@@ -443,9 +443,7 @@ public class PedidoController {
 		estadoPedido.setPedido(pedidoNovo);
 		estadoPedido.setUser(loggedUser);
 		estadoPedido.setObservacao(observacao.getObservacao());
-		
-		System.out.println("ATé aqui");
-		System.out.println(observacao.getEstado());
+
 		
 //		if (observacao.getEstado() < 20) {
 			estadoPedido.setCurrestado(observacao.getEstado());
