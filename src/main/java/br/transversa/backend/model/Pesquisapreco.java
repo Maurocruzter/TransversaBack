@@ -57,6 +57,9 @@ public class Pesquisapreco implements Serializable {
 
 	@Column(nullable=false, length=45)
 	private String uuid;
+	
+	@Transient 
+	private String vendedor;
 
 	//bi-directional many-to-one association to User
 	@ManyToOne(fetch=FetchType.LAZY)
@@ -128,6 +131,16 @@ public class Pesquisapreco implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	
+
+	public String getVendedor() {
+		return vendedor;
+	}
+
+	public void setVendedor(String vendedor) {
+		this.vendedor = vendedor;
 	}
 
 	public Pesquisapreco(String nome, byte[] data, String fileType) {
@@ -206,10 +219,33 @@ public class Pesquisapreco implements Serializable {
 		this.codigoBarras = codigoBarras;
 		this.razaoSocial = razaoSocial;
 		this.endereco = endereco;
-		
-		System.out.println(dataCriado);
 		this.dataCriado = (Timestamp) dataCriado;
 		
+	}
+	
+	public Pesquisapreco(Long id, 
+			String nome, 
+			BigDecimal preco, 
+			String uuid, 
+			String marca,
+			String descricao,
+			BigInteger codigoBarras,
+			String razaoSocial,
+			String endereco,
+			Date dataCriado,
+			String vendedor) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.preco = preco;
+		this.uuid = uuid;
+		this.marca = marca;
+		this.descricao = descricao;
+		this.codigoBarras = codigoBarras;
+		this.razaoSocial = razaoSocial;
+		this.endereco = endereco;
+		this.dataCriado = (Timestamp) dataCriado;
+		this.vendedor = vendedor;
 	}
 
 	public String getRazaoSocial() {

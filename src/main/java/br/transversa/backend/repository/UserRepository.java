@@ -114,8 +114,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "u.tipoEstabelecimento, u.bairro) from User u WHERE u.user2.id = :id")
 	List<User> listAllClientesDoUserVOffline(Long id);
 
-	@Query("select new User(u.id) from User u WHERE u.id = :idCliente AND u.user2.id = :idVendedor")
+	@Query("select new User(u.user2.id, u.user2.comissao) from User u WHERE u.id = :idCliente AND u.user2.id = :idVendedor")
 	Optional<User> findIfVendedorHasCliente(Long idVendedor, Long idCliente);
+	
+	@Query("select new User(u.user2.id, u.user2.comissao) from User u WHERE u.id = :idCliente ")
+	Optional<User> findVendedorDoCliente(Long idCliente);
 	
 	@Query("select new User(u.cpf) from User u WHERE u.email = :email")
 	User findUserCpfCnpjByEmail(String email);
@@ -131,4 +134,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
 			+ "u.uuid, u.latitude, u.longitude, u.logradouro) from User u WHERE u.user2.id = :idVendedor")
 	Page<User> findClientesVendedorByPage(Pageable pageable, long idVendedor);
+
+	
 }

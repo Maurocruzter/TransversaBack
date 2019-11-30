@@ -174,15 +174,47 @@ public class PesquisaPrecoController {
 		@PathVariable(name = "pageNumber", required = false) int pageNumber) {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if( auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE")) ||
+				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))	) {
+			pesquisaPrecoService.findAllPesquisaPrecoByPage(pageNumber);
+		}
 		
-//		boolean isVendedor = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
-//		boolean isBase = auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"));
-//		
-//		if(!isVendedor || !isBase) {
-//			return null;
-//		}
+		return null;
+	}
+	
+	@GetMapping(path = "/pesquisaPreco/search"
+			+ "/produto/{produto}"
+			+ "/precoMin/{precoMin}"
+			+ "/precoMax/{precoMax}"
+			+ "/marca/{marca}"
+			+ "/codigoBarras/{codigoBarras}"
+			+ "/vendedor/{vendedor}"
+			+ "/dataInicio/{dataInicio}"
+			+ "/dataFim/{dataFim}"
+			+ "/razaoSocial/{razaoSocial}"
+			+ "/page/{pageNumber}")
+	Page<Pesquisapreco> listPesquisaPrecosByFields(
+				@PathVariable(name = "razaoSocial", required = true) String razaoSocial,
+				@PathVariable(name = "precoMin", required = true) String precoMin,
+				@PathVariable(name = "precoMax", required = true) String precoMax,
+				@PathVariable(name = "produto", required = true) String produto,
+				@PathVariable(name = "marca", required = true) String marca,
+				@PathVariable(name = "codigoBarras", required = true) String codigoBarras,
+				@PathVariable(name = "dataInicio", required = true) String dataInicio,
+				@PathVariable(name = "dataFim", required = true) String dataFim,
+				@PathVariable(name = "vendedor", required = true) String vendedor,
+				@PathVariable(name = "pageNumber", required = true) int pageNumber) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if( auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE")) ||
+				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))	) {
+			return pesquisaPrecoService.findPesquisaPrecoByFields(razaoSocial, precoMin, precoMax, produto,
+					marca, codigoBarras, dataInicio, dataFim, vendedor, pageNumber);
+		}
 		
-		return pesquisaPrecoService.findAllPesquisaPrecoByPage(pageNumber);
+		return null;
+		
+//		return pesquisaPrecoService.findAllPesquisaPrecoByPage(pageNumber);
 	}
 	
 	
@@ -205,7 +237,13 @@ public class PesquisaPrecoController {
 	@GetMapping(path = "/pesquisaPreco/{id}")
 	Pesquisapreco carregarProduto(@PathVariable(name = "id", required = true) Long id) {
 
-		return pesquisaPrecoService.findPesquisaPrecoById(id);
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if( auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE")) ||
+				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))	) {
+			return pesquisaPrecoService.findPesquisaPrecoById(id);
+		}
+		return null;
+		
 
 	}
 	
@@ -213,11 +251,14 @@ public class PesquisaPrecoController {
 	Page<Pesquisapreco> searchProduto(@PathVariable(name = "nome", required = true) String nome,
 								@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
-//		return null;
-		
-		return pesquisaPrecoService.findPesquisaPrecoSearchNome(nome,pageNumber);
-		//return produtoService.findProdutoById(nome);
+		if( auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE")) ||
+				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))	) {
+			return pesquisaPrecoService.findPesquisaPrecoSearchNome(nome,pageNumber);
+		}
+
+		return null;
 
 	}
 	

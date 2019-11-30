@@ -24,7 +24,7 @@ public interface PesquisaPrecoRepository extends JpaRepository<Pesquisapreco, Lo
 
 	
 	@Query("select new Pesquisapreco(p.id, p.nome, p.preco, p.uuid, "
-			+ "p.marca, p.descricao, p.codigoBarras, p.razaoSocial, p.endereco, p.dataCriado) from Pesquisapreco p WHERE p.id = :id")
+			+ "p.marca, p.descricao, p.codigoBarras, p.razaoSocial, p.endereco, p.dataCriado, p.user.nome) from Pesquisapreco p WHERE p.id = :id")
 	Pesquisapreco findPesquisaPrecoById(Long id);
 	
 	

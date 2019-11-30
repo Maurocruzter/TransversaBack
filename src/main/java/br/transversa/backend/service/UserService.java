@@ -122,6 +122,12 @@ public class UserService {
 		return userRepository.findIfVendedorHasCliente(idVendedor, idCliente);
 	}
 
+	public Optional<User> findVendedorDoCliente(Long idCliente) {
+		
+
+		return userRepository.findVendedorDoCliente(idCliente);
+	}
+	
 	public User findCPFCnpJByEmail(String email) {
 		return userRepository.findUserCpfCnpjByEmail(email);
 	}

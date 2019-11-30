@@ -2,6 +2,7 @@ package br.transversa.backend.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,61 +68,6 @@ public class PedidoController {
 	@Autowired
 	PromocaoService promocaoService;
 
-//	@PostMapping(path = "/pedidoCliente/novo")
-//	ResponseEntity fazerPedidoCliente() {
-//
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//		User loggedUser = new User();
-//		loggedUser.setId(Long.parseLong(auth.getName()));
-//
-//		List<Produto> listProdutos = carrinhoService.findProdutosNoCarrinhoClienteWithIdCarrinho(loggedUser.getId());
-//
-//		if (listProdutos.isEmpty())
-//			return null;
-//
-//		Pedido pedido = new Pedido();
-//		pedido.setUser1(loggedUser);
-//		pedido.setUser2(loggedUser);
-//
-//		pedido = pedidoService.createOrUpdatePedido(pedido);
-//
-//		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
-//
-//		BigDecimal total = new BigDecimal(0);
-//
-//		for (Produto produto2 : listProdutos) {
-//
-//			PedidosHasProduto pedidoHasProduto = new PedidosHasProduto();
-//			pedidoHasProduto.setPedido(pedido);
-//			pedidoHasProduto.setPreco(produto2.getPreco());
-//			pedidoHasProduto.setProduto(produto2);
-//			pedidoHasProduto.setQuantidade(produto2.getQuantidade());
-//			pedidoHasProdutoList.add(pedidoHasProduto);
-//			BigDecimal itemPrice = produto2.getPreco().multiply(new BigDecimal(produto2.getQuantidade()));
-//			total = total.add(itemPrice);
-//
-//		}
-//
-//		pedido.setTotalPedido(total);
-//		pedido = pedidoService.createOrUpdatePedido(pedido);
-//
-//		pedidoService.createBulk(pedidoHasProdutoList);
-//
-//		EstadoPedido estadoPedido = new EstadoPedido();
-//		estadoPedido.setPedido(pedido);
-//		estadoPedido.setUser(loggedUser);
-//		estadoPedido.setObservacao("Em análise");
-//
-//		pedidoService.createEstadoPedido(estadoPedido);
-//
-//		Carrinho carrinho = new Carrinho();
-//		carrinho.setId(listProdutos.get(0).getIdCarrinho());
-//
-//		carrinhoService.deleteByCarrinho(carrinho);
-//
-//		return new ResponseEntity(new ApiResponse(true, "Pedido efetuado com sucesso!"), HttpStatus.CREATED);
-//
-//	}
 	
 	@GetMapping(path = "/pedido/loadImage/reclamacaoImagem/{id}")
 	ResponseEntity<Resource> carregarReclamacaoImagem(@PathVariable(name = "id", required = false) Long id) {
@@ -163,12 +109,19 @@ public class PedidoController {
 		clienteUser.setId(listNovoPedidoRequest.getCliente());
 
 		Pedido pedido = new Pedido();
+		
+		User userFAux = new User();
 
 		if (isAdmin) {
 			// Setting quem disparou a compra
 			pedido.setUser1(loggedUser);
 			// Setting quem disparou vai pagar a compra
 			pedido.setUser2(clienteUser);
+			
+			Optional<User> optionalUser = userService.findVendedorDoCliente(clienteUser.getId());
+			
+			pedido.setUser3(optionalUser.get());
+			userFAux.setComissao(optionalUser.get().getComissao().divide(new BigDecimal(2)));
 
 		} else if (isVendedor) {
 
@@ -180,6 +133,8 @@ public class PedidoController {
 				// Setting quem disparou vai pagar a compra
 				pedido.setUser2(clienteUser);
 				pedido.setTotalPedido(new BigDecimal(0));
+				pedido.setUser3(loggedUser);
+				userFAux.setComissao(optionalUser.get().getComissao());
 			} else {
 				return null;
 			}
@@ -196,6 +151,7 @@ public class PedidoController {
 
 		pedido.setFormaPagamento(indexPagamento);
 		pedido.setDataAdicionadoPedido(new Timestamp(new Date().getTime()));
+		pedido.setComissaoVendedor(new BigDecimal(0));
 		// pedidoService.createOrUpdatePedido(pedido);
 		List<PedidosHasProduto> pedidoHasProdutoList = new ArrayList<>();
 
@@ -268,6 +224,7 @@ public class PedidoController {
 		}
 
 		pedido.setTotalPedido(total);
+		pedido.setComissaoVendedor( total.multiply(userFAux.getComissao()).divide(new BigDecimal(100)).setScale(2, RoundingMode.FLOOR));
 		pedido = pedidoService.createOrUpdatePedido(pedido);
 
 		pedidoService.createBulk(pedidoHasProdutoList);
@@ -317,6 +274,15 @@ public class PedidoController {
 		pedido.setUser1(loggedUser);
 		// Setting quem disparou vai pagar a compra
 		pedido.setUser2(loggedUser);
+		
+		User userFAux = new User();
+
+			
+		Optional<User> optionalUser = userService.findVendedorDoCliente(loggedUser.getId());
+			
+		pedido.setUser3(optionalUser.get());
+		userFAux.setComissao(optionalUser.get().getComissao().divide(new BigDecimal(2)));
+
 
 		pedido.setDataAdicionadoPedido(new Timestamp(new Date().getTime()));
 		
@@ -402,6 +368,8 @@ public class PedidoController {
 		}
 
 		pedido.setTotalPedido(total);
+		pedido.setComissaoVendedor( total.multiply(userFAux.getComissao()).divide(new BigDecimal(100)).setScale(2, RoundingMode.FLOOR));
+		
 		pedido = pedidoService.createOrUpdatePedido(pedido);
 
 		pedidoService.createBulk(pedidoHasProdutoList);

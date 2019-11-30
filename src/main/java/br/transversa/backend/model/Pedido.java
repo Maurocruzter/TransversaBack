@@ -67,8 +67,16 @@ public class Pedido implements Serializable {
 	@JoinColumn(name="users_id_cliente")
 	private User user2;
 	
+	//bi-directional many-to-one association to User
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="users_id_receptor_comissao", nullable=false)
+	private User user3;
+	
 	@Column(name="total_pedido")
 	private BigDecimal totalPedido;
+	
+	@Column(name="comissao_vendedor")
+	private BigDecimal comissaoVendedor;
 
 	//bi-directional many-to-one association to PedidosHasProduto
 	@OneToMany(mappedBy="pedido")
@@ -202,6 +210,31 @@ public class Pedido implements Serializable {
 
 	public void setClienteReclamouEstado(int clienteReclamouEstado) {
 		this.clienteReclamouEstado = clienteReclamouEstado;
+	}
+
+	
+
+
+	public User getUser3() {
+		return user3;
+	}
+
+
+
+	public void setUser3(User user3) {
+		this.user3 = user3;
+	}
+
+
+
+	public BigDecimal getComissaoVendedor() {
+		return comissaoVendedor;
+	}
+
+
+
+	public void setComissaoVendedor(BigDecimal comissaoVendedor) {
+		this.comissaoVendedor = comissaoVendedor;
 	}
 
 

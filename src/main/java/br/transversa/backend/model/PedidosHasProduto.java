@@ -67,86 +67,11 @@ public class PedidosHasProduto implements Serializable {
 	@Transient
 	private Long produtoId;
 
+	@Transient
+	private BigDecimal comissaoVendedor;
 	
 	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-	}
 	
-	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-		this.uuid = uuid;
-		this.desconto = desconto;
-	}
-	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto, Long produtoId) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-		this.uuid = uuid;
-		this.desconto = desconto;
-		this.produtoId = produtoId;
-	}
-	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
-			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-		this.uuid = uuid;
-		this.isAprovado = isAprovado;
-		this.isFinalizado = isFinalizado;
-		this.isTransporte = isTransporte;
-		this.isCancelado = isCancelado;
-		this.isEntregue = isEntregue;
-	}
-	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
-			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-		this.uuid = uuid;
-		this.isAprovado = isAprovado;
-		this.isFinalizado = isFinalizado;
-		this.isTransporte = isTransporte;
-		this.isCancelado = isCancelado;
-		this.isEntregue = isEntregue;
-		this.desconto = desconto;
-	}
-	
-	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
-			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto,
-			Long produtoId) {
-		super();
-		this.id = id;
-		this.preco = preco;
-		this.produtoNome = produtoNome;
-		this.quantidade = quantidade;
-		this.uuid = uuid;
-		this.isAprovado = isAprovado;
-		this.isFinalizado = isFinalizado;
-		this.isTransporte = isTransporte;
-		this.isCancelado = isCancelado;
-		this.isEntregue = isEntregue;
-		this.desconto = desconto;
-		this.produtoId = produtoId;
-	}
 
 	public Long getId() {
 		return id;
@@ -285,7 +210,115 @@ public class PedidosHasProduto implements Serializable {
 	public void setProdutoId(Long produtoId) {
 		this.produtoId = produtoId;
 	}
+
+
+	public BigDecimal getComissaoVendedor() {
+		return comissaoVendedor;
+	}
+
+
+	public void setComissaoVendedor(BigDecimal comissaoVendedor) {
+		this.comissaoVendedor = comissaoVendedor;
+	}
 	
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+	}
+	
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.desconto = desconto;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid, BigDecimal desconto, Long produtoId) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.desconto = desconto;
+		this.produtoId = produtoId;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+		this.desconto = desconto;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto,
+			Long produtoId) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+		this.desconto = desconto;
+		this.produtoId = produtoId;
+	}
+	
+	public PedidosHasProduto(Long id, BigDecimal preco, String produtoNome, int quantidade, String uuid,
+			byte isAprovado, byte isFinalizado, byte isTransporte, byte isCancelado, byte isEntregue, BigDecimal desconto,
+			Long produtoId, BigDecimal comissaoVendedor) {
+		super();
+		this.id = id;
+		this.preco = preco;
+		this.produtoNome = produtoNome;
+		this.quantidade = quantidade;
+		this.uuid = uuid;
+		this.isAprovado = isAprovado;
+		this.isFinalizado = isFinalizado;
+		this.isTransporte = isTransporte;
+		this.isCancelado = isCancelado;
+		this.isEntregue = isEntregue;
+		this.desconto = desconto;
+		this.produtoId = produtoId;
+		this.comissaoVendedor = comissaoVendedor;
+	}
 	
 	
 

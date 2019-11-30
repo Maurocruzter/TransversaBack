@@ -11,12 +11,16 @@ import org.springframework.stereotype.Service;
 import br.transversa.backend.model.Pesquisapreco;
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.repository.PesquisaPrecoRepository;
+import br.transversa.backend.repository.custom.CustomPesquisaPrecoRepository;
 
 @Service
 public class PesquisaPrecoService {
 	
 	@Autowired
 	PesquisaPrecoRepository pesquisaPrecoRepository;
+	
+	@Autowired
+	CustomPesquisaPrecoRepository customPesquisaPrecoRepository;
 	
 	
 	public Pesquisapreco save(Pesquisapreco pesquisaPreco) {
@@ -56,6 +60,17 @@ public class PesquisaPrecoService {
 	public Page<Pesquisapreco> findPesquisaPrecoSearchNome(String nome, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return pesquisaPrecoRepository.findPesquisaPrecoByNome(nome, pageable);
+	}
+
+	public Page<Pesquisapreco> findPesquisaPrecoByFields(String razaoSocial, String precoMin, String precoMax, String produto,
+			String marca, String codigoBarras, String dataInicio, String dataFim, String vendedor, int pageNumber) {
+		
+		Pageable pageable = PageRequest.of(pageNumber, 20);
+		return customPesquisaPrecoRepository.findPesquisaPrecoByFields(razaoSocial, 
+				precoMin, precoMax, produto, marca, 
+				codigoBarras, dataInicio, dataFim, 
+				vendedor, pageable);
+		
 	}
 
     

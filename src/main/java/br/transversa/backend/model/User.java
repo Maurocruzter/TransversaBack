@@ -989,6 +989,14 @@ public class User {
 		super();
 		this.cpf = cpf;
 	}
+	
+	public User(Long id, BigDecimal comissao) {
+		super();
+		this.id = id;
+		System.out.println("THEMODAFUCK "+comissao);
+		this.comissao = comissao;
+		System.out.println("THEMODAFUCK "+this.comissao);
+	}
 
 	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,
 			Double latitude, Double longitude, String logradouro) {
