@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 import br.transversa.backend.model.User;
 import br.transversa.backend.repository.FilterUserRepository;
 import br.transversa.backend.repository.UserRepository;
+import br.transversa.backend.util.AppConstants;
 
 @Repository
 public class CustomUserRepository implements FilterUserRepository {
@@ -27,7 +28,7 @@ public class CustomUserRepository implements FilterUserRepository {
     @PersistenceContext
     private EntityManager em;
 	
-	public Page<User> findUserByFields(String nome, String sobrenome, String cpf, String cnpj, Pageable pageable) {
+	public Page<User> findUserByFields(String nome, String sobrenome, String cpf, String cnpj, int perfil, Pageable pageable) {
 
 		String where = "";
 
@@ -35,27 +36,42 @@ public class CustomUserRepository implements FilterUserRepository {
 
 		if(!nome.equalsIgnoreCase("-1")) {
 			conta = conta +1;
-			where = " AND u.nome LIKE CONCAT('%',:nome,'%') ";
+			where = " AND u.user.nome LIKE CONCAT('%',:nome,'%') ";
 		}
 		if(!sobrenome.equalsIgnoreCase("-1")) {
 			conta = conta +1;
-			where = where + " AND u.sobrenome LIKE CONCAT('%',:sobrenome,'%') ";
+			where = where + " AND u.user.sobrenome LIKE CONCAT('%',:sobrenome,'%') ";
 			
 		}
 		
 		if(!cpf.equalsIgnoreCase("-1")) {
 			conta = conta +1;
-			where = where + " AND u.cpf LIKE CONCAT('%',:cpf,'%') ";
+			where = where + " AND u.user.cpf LIKE CONCAT('%',:cpf,'%') ";
 		} 
     	if(!cnpj.equalsIgnoreCase("-1")) {
     		conta = conta +1;
-    		where = where + " AND u.cnpj LIKE CONCAT('%',:cnpj,'%') ";
+    		where = where + " AND u.user.cnpj LIKE CONCAT('%',:cnpj,'%') ";
     	}
+
+    	if(perfil == 0) {
+
+		} else if(perfil == 88) {
+			conta = conta + 1;
+			where = where + " AND u.role.id != 3 ";
+		} else {
+			conta = conta + 1;
+			where = where + " AND u.role.id = " + perfil +" ";
+		} 
+//    	user
     	
-    	String query = "SELECT  new User(u.id, u.nome, u.sobrenome, "
-    			+ "u.cpf, u.email, u.celular, u.uuid, u.latitude, "
-    			+ "u.longitude, u.logradouro) from User u "
+    	String query = "SELECT  new User(u.user.id, u.user.nome, u.user.sobrenome, "
+    			+ "u.user.cpf, u.user.email, u.user.celular, u.user.uuid, u.user.comissao, u.user.latitude, "
+    			+ "u.user.longitude, u.user.logradouro) from UserHasRole u "
     			+ "WHERE ";
+//    	String query = "SELECT  new User(u.id, u.nome, u.sobrenome, "
+//    			+ "u.cpf, u.email, u.celular, u.uuid, u.latitude, "
+//    			+ "u.longitude, u.logradouro) from User u "
+//    			+ "WHERE ";
     	
     	if(conta <1 ) {
     		where = "";

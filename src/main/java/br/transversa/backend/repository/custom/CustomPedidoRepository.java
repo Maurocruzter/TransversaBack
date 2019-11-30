@@ -116,6 +116,11 @@ public class CustomPedidoRepository implements FilterPedidoRepository {
 			} else if(estadoPedido == 7) {
 				//Transporte
 				conta = conta + 1;
+				where = where + " AND ep.pedido.isAprovado = 0 "
+						+ " AND ep.pedido.isCancelado = 0 AND ep.pedido.clienteReclamouEstado = 0 ";
+			} else if(estadoPedido == 8) {
+				//Transporte
+				conta = conta + 1;
 				where = where + " AND ep.pedido.isCancelado = 1 ";
 			}
 
@@ -197,8 +202,14 @@ public class CustomPedidoRepository implements FilterPedidoRepository {
 			} else if(estadoPedido == 7) {
 				//Transporte
 				conta = conta + 1;
+				where = where + " AND ep.estadoPedido.pedido.isAprovado = 0 "
+						+ " AND ep.estadoPedido.pedido.isCancelado = 0 AND ep.estadoPedido.pedido.clienteReclamouEstado = 0 ";
+			} else if(estadoPedido == 8) {
+				//Transporte
+				conta = conta + 1;
 				where = where + " AND ep.estadoPedido.pedido.isCancelado = 1 ";
 			}
+
 			
 		}
 		String query = "";

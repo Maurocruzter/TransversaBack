@@ -14,7 +14,7 @@ INSERT IGNORE INTO user_has_roles(id_user_role,users_id,roles_id) VALUES(1,1,5);
 
 
 
-INSERT IGNORE INTO users(id_user,email,nome_fantasia,senha,razao_social,celular, file_type, uuid, cpf, latitude, longitude) VALUES(2,'vendedor@vendedor.com','vendedor','$2a$10$jhr2k8FxLVvhrZ7vKGQwjuv91r3BLJVFFTluAoRJO1WJdgJPa8btO','vendedor','4444','jpeg','2','56653218007', -22.256380,-45.697000);
+INSERT IGNORE INTO users(id_user,email,nome_fantasia,senha,razao_social,celular, file_type, uuid, cpf, latitude, longitude, comissao) VALUES(2,'vendedor@vendedor.com','vendedor','$2a$10$jhr2k8FxLVvhrZ7vKGQwjuv91r3BLJVFFTluAoRJO1WJdgJPa8btO','vendedor','4444','jpeg','2','56653218007', -22.256380,-45.697000, 8);
 
 INSERT IGNORE INTO user_has_roles(id_user_role,users_id,roles_id) VALUES(2,2,1);
 

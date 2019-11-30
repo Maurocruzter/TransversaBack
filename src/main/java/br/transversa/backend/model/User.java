@@ -1004,6 +1004,22 @@ public class User {
 		this.latitude = latitude;
 		this.longitude = longitude;
 	}
+	
+	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,
+			BigDecimal comissao, Double latitude, Double longitude, String logradouro) {
+		super();
+		this.id = id;
+		this.uuid = uuid;
+		this.cpf = cpf;
+		this.celular = celular;
+		this.email = email;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.logradouro = logradouro;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.comissao = comissao;
+	}
 
 	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,
 			Double latitude, Double longitude, String logradouro, String cnpj) {
@@ -1048,11 +1064,61 @@ public class User {
 		this.casaNumero = casaNumero;
 		this.cidade = cidade;
 		this.inscricaoEstadual = inscricaoEstadual;
+			if(tipoEstabelecimento != null) {
 		this.tipoEstabelecimento2 = AppConstants.TIPO_ESTABELECIMENTOS.get(tipoEstabelecimento);
+		}
 		this.bairro = bairro;
 		
 	}
+	
+	
+	public User(Long id, String nome, String sobrenome, String cpf, String email, String celular, String uuid,
+			Double latitude, Double longitude, String logradouro, String cnpj, String whatsapp,
+			String fixo, String pontoReferencia1, String pontoReferencia2, String observacao,
+			String cep, String casaNumero, String cidade, String inscricaoEstadual, 
+			Integer tipoEstabelecimento, String bairro, BigDecimal comissao
+			) {
+		super();
+		this.id = id;
+		this.nome = nome;
+		this.sobrenome = sobrenome;
+		this.cpf = cpf;
+		this.email = email;
+		this.celular = celular;
+		this.uuid = uuid;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.logradouro = logradouro;
+		this.cnpj = cnpj;
+		this.whatsapp = whatsapp;
+		this.fixo = fixo;
+		this.pontoReferencia1 = pontoReferencia1;
+		this.pontoReferencia2 = pontoReferencia2;
+		this.observacao = observacao;
+		this.cep = cep;
+		this.casaNumero = casaNumero;
+		this.cidade = cidade;
+		this.inscricaoEstadual = inscricaoEstadual;
+			if(tipoEstabelecimento != null) {
+		this.tipoEstabelecimento2 = AppConstants.TIPO_ESTABELECIMENTOS.get(tipoEstabelecimento);
+		}
+		this.bairro = bairro;
+		this.comissao = comissao;
+		
+	}
 
+	public User(byte[] fotoDocumento, int int1, int int2, String fileType) {
+		super();
+		this.fotoDocumento  = fotoDocumento;
+		this.fileType = fileType;
+	}
+	
+	public User(byte[] fotoEstabelecimento, int int1, int int2, int int3, String fileType) {
+		super();
+		this.fotoEstabelecimento  = fotoEstabelecimento;
+		this.fileType = fileType;
+	}
+	
 	
 	public User(Long id, String nome) {
 		super();

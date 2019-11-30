@@ -2,17 +2,18 @@ package br.transversa.backend.controller;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Role;
 import br.transversa.backend.model.User;
 import br.transversa.backend.model.UserHasRole;
@@ -69,15 +72,31 @@ public class UserController {
 		User loggedUser = new User();
 		loggedUser.setId(Long.parseLong(auth.getName()));
 
-//		@Modifying
-//		@Query("UPDATE Pedido p set p.isEntregue = :isEntregue where p.id = :id")
-//		int setPedidoEntregue(byte isEntregue, Long id);
 		loggedUser.setSenha(passwordEncoder.encode(senha));
 
 		userService.ChangePassword(loggedUser.getSenha(), loggedUser.getId());
 
 		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.CREATED);
 
+	}
+	
+	@PostMapping(path = "/user/ajustarComissao/vendedor/{id}/comissao/{comissao}")
+	ResponseEntity<?> carregarFotoEstabelecimento(
+			@PathVariable(name = "id") Long id,
+			@PathVariable(name = "comissao") BigDecimal comissao) {
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))
+				|| auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"))) {
+		
+			userService.ChangeComissao(id, comissao);
+			return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.CREATED); 
+		}
+		
+		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.FORBIDDEN); 
+		
+        		
 	}
 
 	@RequestMapping(value = "/userBulk/add", method = RequestMethod.POST)
@@ -264,6 +283,39 @@ public class UserController {
 		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.CREATED);
 
 	}
+	
+	@GetMapping(path = "/user/loadFotoEstabelecimento/{uuid}")
+	ResponseEntity<Resource> carregarFotoEstabelecimento(@PathVariable(name = "uuid", required = false) String uuid) {
+		
+//		return null;
+		User user = userService.findUserFotoEstabelecimentoByUuid(uuid);
+		
+		if(user == null || user.getFotoEstabelecimento() == null)
+			return null;
+		
+		return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(user.getFileType()))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "file" + "\"")
+        .body(new ByteArrayResource(user.getFotoEstabelecimento()));
+        		
+	}
+	
+	@GetMapping(path = "/user/loadFotoDocumento/{uuid}")
+	ResponseEntity<Resource> carregarFotoDocumento(@PathVariable(name = "uuid", required = false) String uuid) {
+		
+//		return null;
+		User user = userService.findUserFotoDocumentoByUUID(uuid);
+		
+		if(user == null || user.getFotoDocumento() == null)
+			return null;
+		
+		return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(user.getFileType()))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + "File" + "\"")
+        .body(new ByteArrayResource(user.getFotoDocumento()));
+        		
+	}
+	
 
 	@RequestMapping(value = "/user/add", method = RequestMethod.POST)
 	ResponseEntity<?> registrarProduto(@RequestParam(name = "fotoLocal", required = false) MultipartFile fotoLocal,
@@ -443,6 +495,22 @@ public class UserController {
 		return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"), HttpStatus.CREATED);
 
 	}
+	
+	@GetMapping(path = "/user/id/{id}")
+	User searchUserById(@PathVariable(name = "id", required = true) Long id) {
+
+//		return null;
+		
+		Optional<User> aux = userService.findUserById(id);
+		
+		if(aux.isPresent()) {
+			return aux.get();
+		}
+
+		return null;
+		// return produtoService.findProdutoById(nome);
+
+	}
 
 	@GetMapping(path = "/user/searchNome/{nome}/page/{pageNumber}")
 	Page<User> searchProduto(@PathVariable(name = "nome", required = true) String nome,
@@ -456,12 +524,13 @@ public class UserController {
 	}
 	
 	
-	@GetMapping(path = "/user/search/nome/{nome}/sobrenome/{sobrenome}/cpf/{cpf}/cnpj/{cnpj}/page/{pageNumber}")
+	@GetMapping(path = "/user/search/nome/{nome}/sobrenome/{sobrenome}/cpf/{cpf}/cnpj/{cnpj}/perfil/{perfil}/page/{pageNumber}")
 	Page<User> searchUserByFields(
 			@PathVariable(name = "nome", required = true) String nome,
 			@PathVariable(name = "sobrenome", required = true) String sobrenome,
 			@PathVariable(name = "cpf", required = true) String cpf,
 			@PathVariable(name = "cnpj", required = true) String cnpj,
+			@PathVariable(name = "perfil", required = true) int perfil,
 			@PathVariable(name = "pageNumber", required = true) int pageNumber) {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -469,14 +538,13 @@ public class UserController {
 		if (auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) ||
 				auth.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_BASE"))) {
 
-			return userService.findUserFilterFields(nome, sobrenome, cpf, cnpj, pageNumber);
+			return userService.findUserFilterFields(nome, sobrenome, cpf, cnpj, perfil, pageNumber);
 		}
 		else {
 			return null;
 		}
 		
 		
-		// return produtoService.findProdutoById(nome);
 
 	}
 	

@@ -1,5 +1,6 @@
 package br.transversa.backend.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,10 +39,24 @@ public interface UserRepository extends JpaRepository<User, Long> {
 			+ "u.logradouro) from User u")
     Page<User> findUserAll(Pageable pageable);
 	
+	@Query("select new User(u.fotoEstabelecimento, 0, 0, 0, u.fileType) from User u WHERE u.uuid = :uuid")
+    User findFotoEstabelecimentoByUuid(String uuid);
+	
+	@Query("select new User(u.fotoDocumento, 0, 0, u.fileType) from User u WHERE u.uuid = :uuid")
+    User findFotoDocumentoByUuid(String uuid);
+	
 	@Query(value="SELECT new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, u.uuid, u.latitude, u.longitude, "
 			+ "u.logradouro) from User u  "
 			+ "WHERE u.nome LIKE CONCAT('%',:nome,'%')")
 	Page<User> findUserByNome(@Param("nome") String nome, Pageable pageable);
+	
+	@Query(value="SELECT new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
+			+ "u.uuid, u.latitude, u.longitude, u.logradouro, u.cnpj, u.whatsapp, u.fixo, u.pontoReferencia1, "
+			+ "u.pontoReferencia2, u.observacao, u.cep, u.casaNumero, u.cidade, u.inscricaoEstadual, "
+			+ "u.tipoEstabelecimento, u.bairro, u.comissao) "
+			+ " from User u "
+			+ " WHERE u.id = :id")
+	Optional<User> findUserById(@Param("id") Long id);
 	
 	
 	
@@ -108,6 +123,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Modifying
 	@Query("UPDATE User u set u.senha = :senha where u.id = :id")
 	void ChangePassword(String senha, Long id);
+	
+	@Modifying
+	@Query("UPDATE User u set u.comissao = :comissao where u.id = :id")
+	void ChangeComissao(BigDecimal comissao, Long id);
 
 	@Query("select new User(u.id, u.nome, u.sobrenome, u.cpf, u.email, u.celular, "
 			+ "u.uuid, u.latitude, u.longitude, u.logradouro) from User u WHERE u.user2.id = :idVendedor")

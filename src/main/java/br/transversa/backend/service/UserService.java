@@ -1,5 +1,6 @@
 package br.transversa.backend.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,11 +91,11 @@ public class UserService {
 	}
 	
 	
-	public Page<User> findUserFilterFields(String nome, String sobrenome, String cpf, String cnpj, int pageNumber) {
+	public Page<User> findUserFilterFields(String nome, String sobrenome, String cpf, String cnpj, int perfil, int pageNumber) {
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 //		return userRepository.findUserByFields(nome, pageable);
 		
-		return customUserRepository.findUserByFields(nome, sobrenome, cpf, cnpj, pageable);
+		return customUserRepository.findUserByFields(nome, sobrenome, cpf, cnpj, perfil, pageable);
 	}
 
 
@@ -124,7 +125,18 @@ public class UserService {
 	public User findCPFCnpJByEmail(String email) {
 		return userRepository.findUserCpfCnpjByEmail(email);
 	}
+	
+	public Optional<User> findUserById(Long id) {
+		return userRepository.findUserById(id);
+	}
+	
+	public User findUserFotoDocumentoByUUID(String uuid) {
+		return userRepository.findFotoDocumentoByUuid(uuid);
+	}
 
+	public User findUserFotoEstabelecimentoByUuid(String uuid) {
+		return userRepository.findFotoEstabelecimentoByUuid(uuid);
+	}
 
 
 	public void ChangePassword(String senha, Long id) {
@@ -138,6 +150,13 @@ public class UserService {
 		
 		Pageable pageable = PageRequest.of(pageNumber, 20);
 		return userRepository.findClientesVendedorByPage(pageable, idVendedor);
+	}
+
+
+
+	public void ChangeComissao(Long id, BigDecimal comissao) {
+		userRepository.ChangeComissao(comissao, id);
+		
 	}
     
 }

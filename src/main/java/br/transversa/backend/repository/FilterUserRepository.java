@@ -16,6 +16,7 @@ public interface FilterUserRepository {
 			String sobrenome,
 			String cpf,
 			String cnpj,
+			int perfil,
 			Pageable pageable);
 	
 	
