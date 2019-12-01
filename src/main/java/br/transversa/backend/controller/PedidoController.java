@@ -397,10 +397,13 @@ public class PedidoController {
 		return -1;
 	}
 
-	@PostMapping(path = "/adicionarObservacaoPedido/pedido/{pedido}", consumes = "application/json")
-	ResponseEntity adicionarNotaObservacaoPedido(@PathVariable(name = "pedido", required = true) Long pedidoNumero,
-			@RequestBody PedidoObservacaoRequest observacao) {
-
+	@PostMapping(path = "/adicionarObservacaoPedido/pedido/{pedido}")
+	ResponseEntity adicionarNotaObservacaoPedido(@RequestParam(name = "file", required = false) MultipartFile file, 
+			@RequestParam("estado") int estado, 
+			@RequestParam("observacao") String observacao,
+			@RequestParam("entregadorId") Long entregadorId,
+			@PathVariable(name = "pedido", required = true) Long pedidoNumero) throws IOException {		
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User loggedUser = new User();
 		loggedUser.setId(Long.parseLong(auth.getName()));
@@ -410,11 +413,11 @@ public class PedidoController {
 		pedidoNovo.setId(pedidoNumero);
 		estadoPedido.setPedido(pedidoNovo);
 		estadoPedido.setUser(loggedUser);
-		estadoPedido.setObservacao(observacao.getObservacao());
+		estadoPedido.setObservacao(observacao);
 
 		
 //		if (observacao.getEstado() < 20) {
-			estadoPedido.setCurrestado(observacao.getEstado());
+			estadoPedido.setCurrestado(estado);
 //		} 
 
 		pedidoService.createEstadoPedido(estadoPedido);
@@ -430,7 +433,7 @@ public class PedidoController {
 			EntregadorPedido entregadorPedido = new EntregadorPedido();
 			entregadorPedido.setEstadoPedido(estadoPedido);
 			User entregadorUser = new User();
-			entregadorUser.setId(observacao.getEntregadorId());
+			entregadorUser.setId(entregadorId);
 			entregadorPedido.setUser(entregadorUser);
 			entregadorPedido.setCurrestado(0);
 			entregadorPedido.setDataAdicionado(new Timestamp(new Date().getTime()));
@@ -450,7 +453,6 @@ public class PedidoController {
 
 		} else if (estadoPedido.getCurrestado() == 99) {
 
-			System.out.println("Estou dentro odo estado 99");
 			pedidoNovo.setIsFinalizado((byte) 1);
 			pedidoService.setPedidoCancelado(pedidoNovo.getIsFinalizado(), pedidoNovo.getId());
 
@@ -458,21 +460,46 @@ public class PedidoController {
 			
 		}
 		
-		if (observacao.getEstado() > 20) {
-			pedidoNovo.setClienteReclamouEstado(observacao.getEstado());
-			if(observacao.getEstado() == 4) {
+		if (estado > 20) {
+			pedidoNovo.setClienteReclamouEstado(estado);
+			if(estado == 4) {
 				
 				EntregadorPedido entregadorPedido = new EntregadorPedido();
 				entregadorPedido.setEstadoPedido(estadoPedido);
 				User entregadorUser = new User();
-				entregadorUser.setId(observacao.getEntregadorId());
+				entregadorUser.setId(entregadorId);
 				entregadorPedido.setUser(entregadorUser);
 				entregadorPedido.setCurrestado(1);
 				entregadorPedido.setDataAdicionado((Timestamp) new Date());
 				pedidoService.saveEntregadorPedido(entregadorPedido);
 				
 			}
+			
+			if(estado == 24) {
+				EntregadorPedido entregadorPedido = new EntregadorPedido();
+				entregadorPedido.setEstadoPedido(estadoPedido);
+				User entregadorUser = new User();
+				entregadorUser.setId(entregadorId);
+				entregadorPedido.setUser(entregadorUser);
+				entregadorPedido.setCurrestado(0);
+				entregadorPedido.setDataAdicionado(new Timestamp(new Date().getTime()));
+				pedidoService.saveEntregadorPedido(entregadorPedido);
+				pedidoNovo.setIsTransporte((byte) 1);
+				pedidoService.setPedidoTransporte(pedidoNovo.getIsTransporte(), pedidoNovo.getId());
+			}
+
 			pedidoService.setClienteReclamouEstado(pedidoNovo.getClienteReclamouEstado() - 20, pedidoNovo.getId());
+		}
+
+		if(file != null) {
+			estadoPedido.setIncludesPhoto((byte) 1);
+			pedidoService.createEstadoPedido(estadoPedido);
+					
+			ObservacaoEstadoPedido observacaoEstadoPedido = new ObservacaoEstadoPedido();
+			observacaoEstadoPedido.setEstadoPedido(estadoPedido);
+			observacaoEstadoPedido.setData(file.getBytes());
+			
+			pedidoService.saveObservacaoEstadoPedido(observacaoEstadoPedido);
 		}
 
 		return new ResponseEntity(new ApiResponse(true, "Pedido efetuado com sucesso!"), HttpStatus.CREATED);
