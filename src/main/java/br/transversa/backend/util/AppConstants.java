@@ -10,6 +10,14 @@ public interface AppConstants {
     int MAX_PAGE_SIZE = 50;
 
     final List<String> FORMA_PAGAMENTOS =  Arrays.asList("CARTAO", "BOLETO", "DEPOSITO", "TRANSFERENCIA"); 
+    
+    final List<String> ESTADOS_BRASILEIROS =  Arrays.asList("AC", "AL", "AP", "AM",
+    														"BA", "CE", "DF", "ES",
+    														"GO", "MA", "MT", "MS",
+    														"MG", "PA", "PB", "PR",
+    														"PE", "PI", "RJ", "RN",
+    														"RS", "RO", "RR", "SC",
+    														"SP", "SE", "TO"); 
 
     
     final List<String> TIPO_ESTABELECIMENTOS =  Arrays.asList(

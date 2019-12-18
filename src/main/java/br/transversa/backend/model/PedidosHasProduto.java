@@ -320,6 +320,13 @@ public class PedidosHasProduto implements Serializable {
 		this.comissaoVendedor = comissaoVendedor;
 	}
 	
+	public PedidosHasProduto(Long produtoId, int quantidade, BigDecimal desconto) {
+		super();
+		this.produtoId = produtoId;
+		this.quantidade = quantidade;
+		this.desconto = desconto;		
+	}
+	
 	
 
 }

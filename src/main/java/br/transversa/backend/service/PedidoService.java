@@ -145,6 +145,11 @@ public class PedidoService {
 		return pedidoHasProdutoRepository.findPedidoDetalhesByIdPedidoAndIdCliente(idPedido);
 	}
 	
+	public List<PedidosHasProduto> findPedidoDetalhesByIdPedido(Long idPedido) {
+		
+		return pedidoHasProdutoRepository.findPedidoDetalhesByIdPedido(idPedido);
+	}
+	
 	public List<PedidosHasProduto> findPedidoDetalhesByIdPedidoAndIdClienteReturnUUID(Long idCliente, Long idPedido) {
 		
 		return pedidoHasProdutoRepository.findPedidoDetalhesByIdPedidoAndIdClienteReturnUUID(idPedido);

@@ -21,6 +21,9 @@ public interface PedidoHasProdutoRepository extends JpaRepository<PedidosHasProd
 	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade) from PedidosHasProduto php WHERE php.pedido.id = :idPedido")
 	List<PedidosHasProduto> findPedidoDetalhesByIdPedidoAndIdCliente(Long idPedido);
 	
+	@Query(value = "SELECT new PedidosHasProduto(php.produto.id, php.quantidade, php.desconto) from PedidosHasProduto php WHERE php.pedido.id = :idPedido")
+	List<PedidosHasProduto> findPedidoDetalhesByIdPedido(Long idPedido);
+	
 	@Query(value = "SELECT new PedidosHasProduto(php.id, php.preco, php.produto.nome, php.quantidade, php.produto.uuid,"
 			+ "php.pedido.isAprovado, php.pedido.isFinalizado, php.pedido.isTransporte, "
 			+ "php.pedido.isCancelado, php.pedido.isEntregue, php.desconto, php.produto.id ) "

@@ -182,42 +182,7 @@ public class ProdutoController {
        
         
 
-        
-//		
-//		Date myDate = parseDate("1992-10-14");
-//		
-//		Promocoes promocaoReal = new Promocoes();
-//		
-//		promocaoReal.setCompraMinima(0);
-//		promocaoReal.setDataAdicionado(new Timestamp(new Date().getTime()));
-//		promocaoReal.setDataFim(new Timestamp(myDate.getTime()));
-//		promocaoReal.setDataInicio(new Timestamp(myDate.getTime()));
-//		promocaoReal.setDesconto(new BigDecimal(0));
-//		promocaoReal.setPrecoPromocao(new BigDecimal(0));
-//		
-//		
-//		produtoService.save(produto);
-//		
-//		Stock stock = new Stock();
-//		stock.setProduto(produto);
-//		stock.setQuantidade(new Integer(stockInicial));
-//		
-//		stockService.save(stock);
-//		
-//		//promocaoReal.setProduto(produto);
-//        loggedUser.setId(Long.parseLong(auth.getName()));
-//		promocaoReal.setUser(loggedUser);
-//		
-//		promocaoReal.setStock(stock);
-//		promocoesService.save(promocaoReal);
-//		
-//		
-//		StockPromocao stockPromocao = new StockPromocao();
-//		stockPromocao.setPromocoe(promocaoReal);
-//		stockPromocao.setQuantidadeEmPromocao(0);
-//		
-//		stockPromocaoService.save(stockPromocao);
-//		
+    
         return new ResponseEntity(new ApiResponse(true, "Produto adicionado com sucesso"),
                     HttpStatus.CREATED);
 

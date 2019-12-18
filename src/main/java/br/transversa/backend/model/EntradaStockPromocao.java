@@ -30,6 +30,11 @@ public class EntradaStockPromocao implements Serializable {
 	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="stock_promocao_id", nullable=false)
 	private StockPromocao stockPromocao;
+	
+	// bi-directional many-to-one association to User
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "users_id", nullable = false)
+	private User user;
 
 	public EntradaStockPromocao() {
 	}
@@ -66,6 +71,15 @@ public class EntradaStockPromocao implements Serializable {
 		this.stockPromocao = stockPromocao;
 	}
 
+	public User getUser() {
+		return user;
+	}
 
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+
+	
 	
 }

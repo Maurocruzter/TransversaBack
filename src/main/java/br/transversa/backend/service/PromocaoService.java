@@ -13,8 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.transversa.backend.model.Promocoes;
+import br.transversa.backend.model.SaidaProdutoStock;
+import br.transversa.backend.model.SaidaStockPromocao;
 import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.repository.PromocoesRepository;
+import br.transversa.backend.repository.SaidaProdutoStockRepository;
+import br.transversa.backend.repository.SaidaStockPromocaoRepository;
 import br.transversa.backend.repository.StockPromocaoRepository;
 
 @Service
@@ -26,6 +30,12 @@ public class PromocaoService {
 
 	@Autowired
 	StockPromocaoRepository stockPromocaoRepository;
+	
+	@Autowired
+	SaidaStockPromocaoRepository saidaStockpromocaoRepository;
+	
+	@Autowired
+	SaidaProdutoStockRepository saidaProdutoStockRepository;
 
 	public void save(Promocoes promocao) {
 		promocoesRepository.save(promocao);
@@ -72,4 +82,17 @@ public class PromocaoService {
 		return promocoesRepository.findIfPromocaoNoOverlap(idProduto, dataInicio, dataFim);// , dataInicio, dataFim);
 	}
 
+	public StockPromocao findStockPromocaoByIdProdutoRetrieveOnlyId(Long produtoId) {
+		return stockPromocaoRepository.findStockPromocaoByProdutoIdRetrieveOnlyId(produtoId);
+	}
+	
+	public void saveSaidaStockpromocao (SaidaStockPromocao saidaStockPromocao) {
+		saidaStockpromocaoRepository.save(saidaStockPromocao);
+	}
+
+	public void saveSaidaProdutoStock(SaidaProdutoStock saidaProdutoStock) {
+		saidaProdutoStockRepository.save(saidaProdutoStock);
+		
+	}
+	
 }

@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import br.transversa.backend.model.EntradaProdutoStock;
+import br.transversa.backend.model.EntradaStockPromocao;
 import br.transversa.backend.model.EntregadorPedido;
 import br.transversa.backend.model.EstadoPedido;
 import br.transversa.backend.model.ObservacaoEstadoPedido;
@@ -36,6 +38,9 @@ import br.transversa.backend.model.Pedido;
 import br.transversa.backend.model.PedidosHasProduto;
 import br.transversa.backend.model.Produto;
 import br.transversa.backend.model.Promocoes;
+import br.transversa.backend.model.SaidaProdutoStock;
+import br.transversa.backend.model.SaidaStockPromocao;
+import br.transversa.backend.model.StockPromocao;
 import br.transversa.backend.model.User;
 import br.transversa.backend.payload.ApiResponse;
 import br.transversa.backend.payload.ListNovoPedidoRequest;
@@ -426,6 +431,44 @@ public class PedidoController {
 
 			pedidoNovo.setIsAprovado((byte) 1);
 			pedidoService.setPedidoAprovado(pedidoNovo.getIsAprovado(), pedidoNovo.getId());
+			
+			List<PedidosHasProduto> listProdutos = pedidoService.findPedidoDetalhesByIdPedido(pedidoNumero);
+			
+			for(int i = 0; i< listProdutos.size(); i++) {
+				
+				if(listProdutos.get(i).getDesconto().compareTo(new BigDecimal(0) ) == 1 ) {
+					
+					SaidaStockPromocao saidaStockPromocao = new SaidaStockPromocao();
+					saidaStockPromocao.setQuantidade(listProdutos.get(i).getQuantidade());
+					
+					StockPromocao aux  = promocaoService.
+							findStockPromocaoByIdProdutoRetrieveOnlyId(
+									listProdutos.get(i).getProdutoId());
+					
+					saidaStockPromocao.setStockPromocao(aux);
+					saidaStockPromocao.setDataEntrada(new Timestamp(new Date().getTime()));
+					saidaStockPromocao.setUser(loggedUser);
+					promocaoService.saveSaidaStockpromocao(saidaStockPromocao);
+				} else {
+					
+					SaidaProdutoStock saidaProdutoStock = new SaidaProdutoStock();
+					saidaProdutoStock.setQuantidade(listProdutos.get(i).getQuantidade());
+					
+					Produto produto = new Produto();
+					produto.setId(listProdutos.get(i).getProdutoId());
+					saidaProdutoStock.setProduto(produto);
+					saidaProdutoStock.setDataEntrada(new Timestamp(new Date().getTime()));
+					saidaProdutoStock.setUser(loggedUser);
+					
+					promocaoService.saveSaidaProdutoStock(saidaProdutoStock);
+					
+				}
+//				EntradaProdutoStock entradaProdutoStock = new EntradaProdutoStock();
+				//entradaProdutoStock.
+			}
+
+			//
+			
 
 		} else if (estadoPedido.getCurrestado() == 2) {
 

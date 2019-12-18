@@ -63,6 +63,9 @@ public interface StockPromocaoRepository extends JpaRepository<StockPromocao, Lo
 	@Query("select new StockPromocao(sp.id) from StockPromocao sp WHERE sp.promocoe.id = :idPromocao")
 	StockPromocao findStockPromocaoRetrieveOnlyId(Long idPromocao);
 	
+	@Query("select new StockPromocao(sp.id) from StockPromocao sp WHERE sp.promocoe.stock.produto.id = :idProduto")
+	StockPromocao findStockPromocaoByProdutoIdRetrieveOnlyId(Long idProduto);
+	
 	
 
 }
