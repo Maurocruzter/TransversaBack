@@ -1,0 +1,157 @@
+USE `dbfrotas` ;
+DELIMITER //
+  CREATE PROCEDURE `SP_AtualizaEstoque`( `id_prod` bigint(20), `qtde_comprada` int)
+BEGIN
+    declare contador bigint(20);
+ 
+    SELECT count(*) into contador FROM dbfrotas.stock WHERE dbfrotas.stock.produtos_id = id_prod;
+ 
+    IF contador > 0 THEN
+        UPDATE dbfrotas.stock SET dbfrotas.stock.quantidade = dbfrotas.stock.quantidade + qtde_comprada
+        WHERE dbfrotas.stock.produtos_id = id_prod;
+    ELSE
+        INSERT INTO dbfrotas.stock (dbfrotas.stock.produtos_id, dbfrotas.stock.quantidade) values (id_prod, qtde_comprada);
+    END IF;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProduto_AI` AFTER INSERT ON `entrada_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (new.produtos_id, new.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProduto_AU` AFTER UPDATE ON `entrada_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (new.produtos_id, new.quantidade - old.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProduto_AD` AFTER DELETE ON `entrada_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (old.produtos_id, old.quantidade * -1);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProduto_AI` AFTER INSERT ON `saida_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (new.produtos_id, new.quantidade * -1);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProduto_AU` AFTER UPDATE ON `saida_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (new.produtos_id, old.quantidade - new.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProduto_AD` AFTER DELETE ON `saida_produto_stock`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoque (old.produtos_id, old.quantidade);
+END //
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DELIMITER //
+  CREATE PROCEDURE `SP_AtualizaEstoquePromocao`( `id_promocao` bigint(20), `qtde_comprada` int)
+BEGIN
+    declare contador bigint(20);
+ 
+    SELECT count(*) into contador FROM dbfrotas.stock_promocao WHERE dbfrotas.stock_promocao.promocoes_id = id_promocao;
+ 
+    IF contador > 0 THEN
+        UPDATE dbfrotas.stock_promocao SET dbfrotas.stock_promocao.quantidade = dbfrotas.stock_promocao.quantidade + qtde_comprada
+        WHERE dbfrotas.stock_promocao.promocoes_id = id_promocao;
+    ELSE
+        INSERT INTO dbfrotas.stock_promocao (dbfrotas.stock_promocao.promocoes_id, dbfrotas.stock_promocao.quantidade) values (id_promocao, qtde_comprada);
+    END IF;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProdutoPromocao_AI` AFTER INSERT ON `entrada_stock_promocao`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (new.stock_promocao_id, new.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProdutoPromocao_AU` AFTER UPDATE ON `entrada_stock_promocao`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (new.stock_promocao_id, new.quantidade - old.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_EntradaProdutoPromocao_AD` AFTER DELETE ON `entrada_stock_promocao`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (old.stock_promocao_id, old.quantidade * -1);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProdutoPromocao_AI` AFTER INSERT ON `saida_stock_promocao`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (new.stock_promocao_id, new.quantidade * -1);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProdutoPromocao_AU` AFTER UPDATE ON `saida_stock_promocao`
+FOR EACH ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (new.stock_promocao_id, old.quantidade - new.quantidade);
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE TRIGGER `TRG_SaidaProdutoPromocao_AD` AFTER DELETE ON `saida_stock_promocao`
+FOR EACH  ROW
+BEGIN
+      CALL SP_AtualizaEstoquePromocao (old.stock_promocao_id, old.quantidade);
+END //
+DELIMITER ;
+
+
+
+
